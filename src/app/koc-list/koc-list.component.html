@@ -1,0 +1,67 @@
+<table>
+  <thead>
+    <tr>
+      <th>Tên Kênh</th>
+      <th>Link Kênh</th>
+      <th>Trùng</th>
+      <th>Nhân Viên</th>
+      <th>Quản Lý</th>
+      <th>Ngày Tìm</th>
+      <th>Cast</th>
+      <th>Hoa Hồng</th>
+      <th>Ghi Chú</th>
+      <th>Nhãn</th>
+      <th>Sản Phẩm</th>
+      <th>Trạng Thái</th>
+      <th>Link Video TikTok</th>
+      <th>ID Video TikTok</th>
+      <th>Ngày Air TikTok</th>
+      <th>Ngày Gửi Mẫu</th>
+      <th>Ngày Air Dự Kiến</th>
+      <th>Title</th>
+      <th>Data Retrieval Time</th>
+      <th>GMV</th>
+      <th>Views</th>
+      <th>Likes</th>
+      <th>Comments</th>
+      <th>Shares</th>
+      <th>Saves</th>
+      <th>Status</th>
+      <th>Liên Hệ Lại</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of kocList">
+      <td>{{ item.channelName }}</td>
+      <td><a [href]="item.linkChannel" target="_blank">{{ item.linkChannel }}</a></td>
+      <td>{{ item.isDuplicate ? 'Trùng' : 'Không trùng' }}</td>
+      <td>{{ item.staff }}</td>
+      <td>{{ item.manager }}</td>
+      <td>{{ item.dateFound }}</td>
+      <!-- <td>{{ item.channel || '' }}</td> --> <!-- Default nếu cần -->
+      <td>{{ item.cast }}</td>
+      <td>{{ item.commission }}</td>
+      <td>{{ item.note }}</td>
+      <td>{{ item.labels && Array.isArray(item.labels) ? item.labels.join(', ') : item.labels || '' }}</td>
+      <td>{{ item.product && Array.isArray(item.product) ? item.product.join(', ') : item.product || '' }}</td>
+      <td>{{ item.status }}</td>
+      <td>{{ item.videoLink || '' }}</td> <!-- Thay tiktokVideoLink -->
+      <td>{{ item.videoId }}</td>
+      <td>{{ item.actualAirDate || '' }}</td> <!-- Thay airDate -->
+      <!-- <td>{{ item.totalViews || 0 }}</td> -->
+      <!-- ... Tương tự cho các field khác ... -->
+      <td>{{ item.sampleSendDate || '' }}</td> <!-- Thay sampleSendDate -->
+      <td>{{ item.expectedAirDate || '' }}</td>
+      <td>{{ item.title }}</td>
+      <td>{{ item.dataRetrievalTime }}</td>
+      <td>{{ item.gmv }}</td>
+      <td>{{ item.views }}</td>
+      <td>{{ item.likes }}</td>
+      <td>{{ item.comments }}</td>
+      <td>{{ item.shares }}</td>
+      <td>{{ item.saves }}</td>
+      <td>{{ item.status }}</td> <!-- Lặp lại, có thể xóa 1 -->
+      <td>{{ item.recontact }}</td>
+    </tr>
+  </tbody>
+</table>
