@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
-import { serverTimestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-add-koc',
@@ -68,7 +67,7 @@ export class AddKocComponent {
   }
 
   /* ==========================
-      SAVE FIREBASE
+      SAVE
   ========================== */
   async saveKoc() {
     if (!this.kocData.channelName || !this.kocData.linkChannel) {
@@ -81,13 +80,13 @@ export class AddKocComponent {
     try {
       await this.kocService.addKoc({
         ...this.kocData,
-        createdAt: serverTimestamp()
+        createdAt: new Date() // ✅ ĐÚNG
       });
 
       alert('✅ Lưu KOC thành công!');
       this.closePopup();
     } catch (error) {
-      console.error('Firebase error:', error);
+      console.error('Save KOC error:', error);
       alert('❌ Lỗi khi lưu dữ liệu');
     } finally {
       this.isSubmitting = false;
@@ -113,8 +112,8 @@ export class AddKocComponent {
       products: [],
       status: '',
 
-      staff: 'Lê Châu',        // sau này lấy từ auth
-      manager: 'Trưởng Team',  // role
+      staff: 'Lê Châu',
+      manager: 'Trưởng Team',
 
       gmv: 0,
       views: 0,

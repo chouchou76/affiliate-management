@@ -43,6 +43,7 @@ interface KocData {
 
 @Component({
   selector: 'app-koc-list',
+  standalone: true,
   templateUrl: './koc-list.component.html',
   styleUrls: ['./koc-list.component.css'],
   imports: [CommonModule],

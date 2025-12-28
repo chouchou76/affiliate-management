@@ -1,20 +1,18 @@
-import { inject, Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, collectionData } from '@angular/fire/firestore';
-import { KocData } from '../models/koc.model';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class KocService {
-  private firestore = inject(Firestore);
-  private kocCollection = collection(this.firestore, 'kocs');
-
-  addKoc(kocData: KocData): Promise<void> {
-    return addDoc(this.kocCollection, kocData).then(() => {});
+  async addKoc(data: any) {
+    return await addDoc(collection(db, 'kocs'), {
+      ...data,
+      createdAt: new Date()
+    });
   }
 
-  getKocs(): Observable<KocData[]> {
-    return collectionData(this.kocCollection, { idField: 'id' }) as Observable<KocData[]>;
+  async getKocs() {
+    const snap = await getDocs(collection(db, 'kocs'));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
   }
 }
