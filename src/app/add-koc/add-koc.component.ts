@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { KocService } from '../services/koc.service';
@@ -16,9 +16,12 @@ export class AddKocComponent {
   isSubmitting = false;
   isEditMode = false;
 
+  @Input() editingKoc: KocData | null = null;
+  
   kocData: KocData = this.initForm();
 
   @Output() saved = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
 
   availableLabels = ['ENZYCO', 'HAPAKU'];
   availableProducts = ['Rửa Bát', 'Ngâm Rau', 'Nước Lau Sàn', 'Túi Than'];
@@ -34,21 +37,25 @@ export class AddKocComponent {
 
   constructor(private kocService: KocService) {}
 
-  /* ==========================
-      POPUP
-  ========================== */
-  openPopup() {
+  openPopup(koc?: KocData) {
     this.isPopupOpen = true;
+
+    if (koc) {
+      this.isEditMode = true;
+      this.kocData = { ...koc }; // clone
+    } else {
+      this.isEditMode = false;
+      this.kocData = this.initForm();
+    }
   }
 
   closePopup() {
     this.isPopupOpen = false;
+    this.isEditMode = false;
     this.resetForm();
+    this.closed.emit();
   }
 
-  /* ==========================
-      TAG HANDLER
-  ========================== */
   addTag(list: string[], input: HTMLInputElement) {
     const value = input.value.trim();
     if (value && !list.includes(value)) {
@@ -70,34 +77,40 @@ export class AddKocComponent {
   }
 
   async saveKoc() {
-  if (!this.kocData.channelName) {
-    alert('Vui lòng nhập Tên kênh');
-    return;
+    if (!this.kocData.channelName) {
+      alert('Vui lòng nhập Tên kênh');
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      const payload = {
+        ...this.kocData,
+        linkChannel: `https://www.tiktok.com/@${this.kocData.channelName}`
+      };
+
+      if (this.isEditMode && this.kocData.id) {
+        // 🔥 UPDATE
+        await this.kocService.updateKoc(this.kocData.id, payload);
+      } else {
+        // 🔥 ADD NEW
+        await this.kocService.addKoc({
+          ...payload,
+          createdAt: new Date()
+        });
+      }
+
+      this.saved.emit();
+      this.closePopup();
+    } catch (e) {
+      console.error(e);
+      alert('❌ Lỗi khi lưu');
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
-  this.isSubmitting = true;
-
-  try {
-    const payload = {
-      ...this.kocData,
-      linkChannel: `https://www.tiktok.com/@${this.kocData.channelName}`,
-      createdAt: new Date()
-    };
-
-    await this.kocService.addKoc(payload);
-
-    alert('✅ Lưu KOC thành công!');
-
-    this.saved.emit();
-
-    this.closePopup();
-  } catch (error) {
-    console.error(error);
-    alert('❌ Lỗi khi lưu dữ liệu');
-  } finally {
-    this.isSubmitting = false;
-  }
-}
 
   private initForm(): KocData {
     return {

@@ -32,7 +32,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of kocList">
+    <tr *ngFor="let item of kocList" (click)="edit(item)">
       <td>{{ item.channelName }}</td>
       <td><a [href]="item.linkChannel" target="_blank">{{ item.linkChannel }}</a></td>
       <td>{{ item.isDuplicate ? 'Trùng' : 'Không trùng' }}</td>
@@ -67,6 +67,10 @@
       <td>{{ item.saves }}</td>
       <td>{{ item.status }}</td> 
       <td>{{ item.recontact }}</td>
+      <td>
+        <button (click)="edit(item); $event.stopPropagation()">✏️</button>
+        <button (click)="remove(item); $event.stopPropagation()">🗑️</button>
+      </td>
     </tr>
   </tbody>
 </table>

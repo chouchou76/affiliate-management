@@ -4,6 +4,8 @@ import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { ViewChild } from '@angular/core';
+import { AddKocComponent } from '../add-koc/add-koc.component';
 
 @Component({
   selector: 'app-koc-list',
@@ -16,6 +18,22 @@ import { db } from '../firebase';
 export class KocListComponent implements OnChanges {
 
   @Input() kocList: KocData[] = [];
+
+  @ViewChild(AddKocComponent) addKocPopup!: AddKocComponent;
+
+  edit(item: KocData) {
+    this.addKocPopup.openPopup(item);
+  }
+
+  onSaved() {}
+
+  remove(item: KocData) {
+    if (!item.id) return;
+
+    if (confirm('Bạn chắc chắn muốn xóa KOC này?')) {
+      this.kocService.deleteKoc(item.id);
+    }
+  }
 
   statuses: string[] = [
     'Chưa liên hệ',

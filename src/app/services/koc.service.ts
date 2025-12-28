@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   collection,
   addDoc,
-  onSnapshot
+  onSnapshot,
+  deleteDoc
 } from 'firebase/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { db } from '../firebase';
@@ -23,6 +24,11 @@ export class KocService {
   updateKoc(id: string, data: Partial<KocData>) {
     const ref = doc(db, 'kocs', id);
     return updateDoc(ref, data);
+  }
+
+  deleteKoc(id: string) {
+    const ref = doc(db, 'kocs', id);
+    return deleteDoc(ref);
   }
 
   private listenRealtime() {
