@@ -7,51 +7,32 @@ import {
 import { BehaviorSubject, Observable } from 'rxjs';
 import { db } from '../firebase';
 import { KocData } from '../models/koc.model';
+import { doc, updateDoc } from 'firebase/firestore';
+import { KocListComponent } from '../koc-list/koc-list.component';
+import { AddKocComponent } from '../add-koc/add-koc.component';
 
 @Injectable({ providedIn: 'root' })
 export class KocService {
-
+  
   private kocSubject = new BehaviorSubject<KocData[]>([]);
 
   constructor() {
     this.listenRealtime();
   }
 
+  updateKoc(id: string, data: Partial<KocData>) {
+    const ref = doc(db, 'kocs', id);
+    return updateDoc(ref, data);
+  }
+
   private listenRealtime() {
     const ref = collection(db, 'kocs');
 
     onSnapshot(ref, snapshot => {
-      const data: KocData[] = snapshot.docs.map(doc => {
-        const raw = doc.data() as Partial<KocData>;
-
-        return {
-          channelName: raw.channelName ?? '',
-          linkChannel: raw.linkChannel ?? '',
-          isDuplicate: raw.isDuplicate ?? false,
-          dateFound: raw.dateFound ?? '',
-
-          cast: raw.cast ?? '',
-          commission: raw.commission ?? '',
-          note: raw.note ?? '',
-          recontact: raw.recontact ?? '',
-
-          labels: raw.labels ?? [],
-          products: raw.products ?? [],
-          status: raw.status ?? '',
-
-          staff: raw.staff ?? '',
-          manager: raw.manager ?? '',
-
-          gmv: raw.gmv ?? 0,
-          views: raw.views ?? 0,
-          likes: raw.likes ?? 0,
-          comments: raw.comments ?? 0,
-          shares: raw.shares ?? 0,
-          saves: raw.saves ?? 0,
-
-          createdAt: raw.createdAt ?? null
-        };
-      });
+      const data: KocData[] = snapshot.docs.map(d => ({
+        id: d.id,
+        ...(d.data() as KocData)
+      }));
 
       this.kocSubject.next(data);
     });

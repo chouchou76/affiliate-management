@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { KocService } from '../services/koc.service';
@@ -14,8 +14,11 @@ import { KocData } from '../models/koc.model';
 export class AddKocComponent {
   isPopupOpen = false;
   isSubmitting = false;
+  isEditMode = false;
 
   kocData: KocData = this.initForm();
+
+  @Output() saved = new EventEmitter<void>();
 
   availableLabels = ['ENZYCO', 'HAPAKU'];
   availableProducts = ['Rửa Bát', 'Ngâm Rau', 'Nước Lau Sàn', 'Túi Than'];
@@ -66,36 +69,36 @@ export class AddKocComponent {
     list.splice(index, 1);
   }
 
-  /* ==========================
-      SAVE
-  ========================== */
   async saveKoc() {
-    if (!this.kocData.channelName || !this.kocData.linkChannel) {
-      alert('Vui lòng nhập Tên kênh và Link kênh');
-      return;
-    }
-
-    this.isSubmitting = true;
-
-    try {
-      await this.kocService.addKoc({
-        ...this.kocData,
-        createdAt: new Date() // ✅ ĐÚNG
-      });
-
-      alert('✅ Lưu KOC thành công!');
-      this.closePopup();
-    } catch (error) {
-      console.error('Save KOC error:', error);
-      alert('❌ Lỗi khi lưu dữ liệu');
-    } finally {
-      this.isSubmitting = false;
-    }
+  if (!this.kocData.channelName) {
+    alert('Vui lòng nhập Tên kênh');
+    return;
   }
 
-  /* ==========================
-      INIT / RESET
-  ========================== */
+  this.isSubmitting = true;
+
+  try {
+    const payload = {
+      ...this.kocData,
+      linkChannel: `https://www.tiktok.com/@${this.kocData.channelName}`,
+      createdAt: new Date()
+    };
+
+    await this.kocService.addKoc(payload);
+
+    alert('✅ Lưu KOC thành công!');
+
+    this.saved.emit();
+
+    this.closePopup();
+  } catch (error) {
+    console.error(error);
+    alert('❌ Lỗi khi lưu dữ liệu');
+  } finally {
+    this.isSubmitting = false;
+  }
+}
+
   private initForm(): KocData {
     return {
       channelName: '',

@@ -27,4 +27,5 @@ export class AppComponent {
       this.kocList = data;
     });
   }
+  reloadKocs() {}
 }

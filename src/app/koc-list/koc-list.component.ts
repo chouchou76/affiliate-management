@@ -2,46 +2,8 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, OnChanges, SimpleCha
 import { CommonModule } from '@angular/common';
 import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
-
-// interface KocData {
-//   expectedAirDate: any;
-//   actualAirDate: any;
-//   videoLink: any;
-//   channelName: string;
-//   staff: string;
-//   manager: string;
-//   dateFound: string;
-//   channel: string;
-//   cast: string;
-//   commission: string;
-//   note: string;
-//   labels: string[];
-//   product: string[];
-//   status: string;
-//   tiktokVideoLink: string;
-//   videoId: string;
-//   airDate: string;
-//   totalViews: number;
-//   traffic: string;
-//   castApproval: string;
-//   sampleSendDate: string;
-//   shopManagement: string;
-//   viewTiktok: string;
-//   viewOther: string;
-//   viewCount: number;
-//   releaseTime: string;
-//   title: string;
-//   dataRetrievalTime: string;
-//   gmv: number;
-//   views: number;
-//   likes: number;
-//   comments: number;
-//   shares: number;
-//   saves: number;
-//   isDuplicate: boolean;
-//   recontact: string;
-//   linkChannel?: string;  
-// }
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 @Component({
   selector: 'app-koc-list',
@@ -55,17 +17,27 @@ export class KocListComponent implements OnChanges {
 
   @Input() kocList: KocData[] = [];
 
+  statuses: string[] = [
+    'Chưa liên hệ',
+    'Đã liên hệ',
+    'Đồng ý',
+    'Từ chối',
+    'Đã gửi mẫu',
+    'Đã nhận mẫu',
+    'Đã lên video'
+  ];
+
   constructor(private kocService: KocService) {}
-  ngOnChanges(changes: SimpleChanges): void {
-    throw new Error('Method not implemented.');
+  ngOnChanges(): void {
+
   }
 
   ngOnInit(): void {
     this.kocService.getKocs().subscribe(data => {
       this.kocList = data.map(item => ({
         ...item,
-        linkChannel: `https://www.tiktok.com/@${item.channelName}`,
-        isDuplicate: false // xử lý dưới
+        linkChannel: item.linkChannel || `https://www.tiktok.com/@${item.channelName}`,
+        isDuplicate: false
       }));
 
       this.markDuplicates();
@@ -79,5 +51,19 @@ export class KocListComponent implements OnChanges {
       ).length;
       item.isDuplicate = count > 1;
     });
+  }
+
+  updateField(item: KocData, field: keyof KocData, value: any) {
+    if (!item.id) return;
+    if (value === undefined || value === null) return;
+
+    this.kocService.updateKoc(item.id, {
+      [field]: value
+    });
+  }
+
+  private updateKoc(id: string, data: Partial<KocData>) {
+    const ref = doc(db, 'kocs', id);
+    return updateDoc(ref, data);
   }
 }

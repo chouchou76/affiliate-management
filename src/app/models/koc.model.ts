@@ -1,4 +1,5 @@
 export interface KocData {
+  id?: string;
   channelName: string;
   linkChannel: string;
   isDuplicate: boolean;
@@ -22,6 +23,7 @@ export interface KocData {
   dataRetrievalTime?: string;
 
   sampleSendDate?: string;
+  sampleReceiveDate?: string;
   expectedAirDate?: string;
   actualAirDate?: string;
 
