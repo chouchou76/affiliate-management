@@ -21,7 +21,7 @@ export interface KocData {
   title?: string;
   dataRetrievalTime?: string;
 
-  sampleSentDate?: string;
+  sampleSendDate?: string;
   expectedAirDate?: string;
   actualAirDate?: string;
 

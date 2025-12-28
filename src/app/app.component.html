@@ -1,11 +1,2 @@
-<div>
-  <!-- <router-outlet></router-outlet> -->
-  
-  <div class="container">
-    <!-- Popup Thêm KOC -->
-    <app-add-koc (saveKocEvent)="updateKocList($event)"></app-add-koc>
-
-    <!-- Danh sách KOC -->
-    <app-koc-list [kocList]="kocList"></app-koc-list>
-  </div>
-</div>
+<app-add-koc></app-add-koc>
+<app-koc-list [kocList]="kocList"></app-koc-list>

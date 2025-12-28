@@ -42,8 +42,8 @@
       <td>{{ item.cast }}</td>
       <td>{{ item.commission }}</td>
       <td>{{ item.note }}</td>
-      <td>{{ item.labels && Array.isArray(item.labels) ? item.labels.join(', ') : item.labels || '' }}</td>
-      <td>{{ item.product && Array.isArray(item.product) ? item.product.join(', ') : item.product || '' }}</td>
+      <td>{{ item.labels.join(', ') }}</td>
+      <td>{{ item.products.join(', ') }}</td>
       <td>{{ item.status }}</td>
       <td>{{ item.videoLink || '' }}</td> <!-- Thay tiktokVideoLink -->
       <td>{{ item.videoId }}</td>

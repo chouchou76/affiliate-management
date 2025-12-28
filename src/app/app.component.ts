@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddKocComponent } from './add-koc/add-koc.component';
 import { KocListComponent } from './koc-list/koc-list.component';
+import { KocService } from './services/koc.service';
+import { KocData } from './models/koc.model';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +16,15 @@ import { KocListComponent } from './koc-list/koc-list.component';
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  kocList: any[] = [];
+  kocList: KocData[] = [];
 
-  updateKocList(koc: any) {
-    this.kocList.push(koc);
+  constructor(private kocService: KocService) {
+    this.loadData();
+  }
+
+  loadData() {
+    this.kocService.getKocs().subscribe(data => {
+      this.kocList = data;
+    });
   }
 }
