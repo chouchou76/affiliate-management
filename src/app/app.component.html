@@ -1,7 +1,8 @@
 <!-- <app-add-koc (saved)="reloadKocs()"></app-add-koc> -->
- <app-add-koc
-  #addPopup
-  (saved)="onSaved()">
+<app-add-koc
+  *ngIf="showPopup"
+  
+  (closed)="closePopup()">
 </app-add-koc>
 
 <app-koc-list [kocList]="kocList"></app-koc-list>

@@ -29,4 +29,22 @@ export class AppComponent {
   }
   reloadKocs() {}
   onSaved() {}
+
+  selectedKoc: KocData | null = null;
+  showPopup = false;
+
+  openAdd() {
+    this.selectedKoc = null;
+    this.showPopup = true;
+  }
+
+  openEdit(koc: KocData) {
+    this.selectedKoc = koc;
+    this.showPopup = true;
+  }
+
+  closePopup() {
+    this.showPopup = false;
+    this.selectedKoc = null;
+  }
 }

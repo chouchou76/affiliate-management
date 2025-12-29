@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { KocService } from '../services/koc.service';
@@ -12,12 +12,11 @@ import { KocData } from '../models/koc.model';
   styleUrls: ['./add-koc.component.css']
 })
 export class AddKocComponent {
+
   isPopupOpen = false;
   isSubmitting = false;
   isEditMode = false;
 
-  @Input() editingKoc: KocData | null = null;
-  
   kocData: KocData = this.initForm();
 
   @Output() saved = new EventEmitter<void>();
@@ -37,12 +36,15 @@ export class AddKocComponent {
 
   constructor(private kocService: KocService) {}
 
+  /* =====================
+      OPEN POPUP
+  ===================== */
   openPopup(koc?: KocData) {
     this.isPopupOpen = true;
 
     if (koc) {
       this.isEditMode = true;
-      this.kocData = { ...koc }; // clone
+      this.kocData = { ...koc }; // clone tránh mutate list
     } else {
       this.isEditMode = false;
       this.kocData = this.initForm();
@@ -56,26 +58,25 @@ export class AddKocComponent {
     this.closed.emit();
   }
 
-  addTag(list: string[], input: HTMLInputElement) {
-    const value = input.value.trim();
-    if (value && !list.includes(value)) {
-      list.push(value);
-    }
-    input.value = '';
-  }
+  addTag(list: string[], input: HTMLInputElement) { 
+    const value = input.value.trim(); 
+    if (value && !list.includes(value)) { 
+      list.push(value); 
+    } 
+    input.value = ''; 
+  } 
 
-  addSelectTag(list: string[], event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    if (value && !list.includes(value)) {
-      list.push(value);
-    }
-    (event.target as HTMLSelectElement).value = '';
-  }
+  addSelectTag(list: string[], event: Event) { const value = (event.target as HTMLSelectElement).value; 
+    if (value && !list.includes(value)) { 
+      list.push(value); 
+    } 
+    (event.target as HTMLSelectElement).value = ''; 
+  } 
 
-  removeTag(list: string[], index: number) {
-    list.splice(index, 1);
+  removeTag(list: string[], index: number) { 
+    list.splice(index, 1); 
   }
-
+  
   async saveKoc() {
     if (!this.kocData.channelName) {
       alert('Vui lòng nhập Tên kênh');
@@ -85,20 +86,20 @@ export class AddKocComponent {
     this.isSubmitting = true;
 
     try {
-      const payload = {
+      const payload: Partial<KocData> = {
         ...this.kocData,
         linkChannel: `https://www.tiktok.com/@${this.kocData.channelName}`
       };
 
       if (this.isEditMode && this.kocData.id) {
-        // 🔥 UPDATE
+        // ✅ UPDATE – KHÔNG TẠO ID MỚI
         await this.kocService.updateKoc(this.kocData.id, payload);
       } else {
-        // 🔥 ADD NEW
+        // ✅ ADD NEW
         await this.kocService.addKoc({
           ...payload,
           createdAt: new Date()
-        });
+        } as KocData);
       }
 
       this.saved.emit();
@@ -110,7 +111,6 @@ export class AddKocComponent {
       this.isSubmitting = false;
     }
   }
-
 
   private initForm(): KocData {
     return {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { KocData } from '../models/koc.model';
 
 // @Component({
 //   selector: 'app-dashboard',
@@ -9,23 +10,38 @@ import { CommonModule } from '@angular/common';
 // })
 
 @Component({
-  selector: 'app-root',  // Có thể để app-root nếu muốn, nhưng không sao
+  selector: 'app-root',  
   // standalone: true,
   imports: [
     CommonModule,
-    RouterLink,     // Để routerLink trên button hoạt động
-    RouterOutlet    // QUAN TRỌNG: Để hiển thị các trang con
+    RouterLink,     
+    RouterOutlet    
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 
 export class DashboardComponent implements OnInit {
-  totalKoc: number = 20;  // Dữ liệu giả
-  totalVideos: number = 50;  // Dữ liệu giả
-  totalGMV: number = 10000;  // Dữ liệu giả
 
   constructor() { }
+
+  selectedKoc: KocData | null = null;
+  showPopup = false;
+
+  openAdd() {
+    this.selectedKoc = null;
+    this.showPopup = true;
+  }
+
+  openEdit(koc: KocData) {
+    this.selectedKoc = koc;
+    this.showPopup = true;
+  }
+
+  closePopup() {
+    this.showPopup = false;
+    this.selectedKoc = null;
+  }
 
   ngOnInit(): void {
     // Logic để lấy dữ liệu từ backend (nếu có)
