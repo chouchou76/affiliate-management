@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
+import { TiktokCrawlService } from '../services/tiktok-crawl.service';
 
 @Component({
   selector: 'app-add-koc',
@@ -34,7 +35,11 @@ export class AddKocComponent {
     'Đã lên video'
   ];
 
-  constructor(private kocService: KocService) {}
+  constructor(
+    private kocService: KocService,
+    private crawlService: TiktokCrawlService
+  ) {}
+
 
   /* =====================
       OPEN POPUP
@@ -111,6 +116,21 @@ export class AddKocComponent {
       this.isSubmitting = false;
     }
   }
+
+  async onVideoLinkBlur() {
+    if (!this.kocData.videoLink) return;
+
+    try {
+      const data = await this.crawlService
+        .crawl(this.kocData.videoLink)
+        .toPromise();
+
+      Object.assign(this.kocData, data);
+    } catch (e) {
+      alert('Không crawl được video TikTok');
+    }
+  }
+
 
   private initForm(): KocData {
     return {
