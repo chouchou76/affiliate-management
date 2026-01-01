@@ -41,8 +41,8 @@
       <td>{{ item.cast }}</td>
       <td>{{ item.commission }}</td>
       <td>{{ item.note }}</td>
-      <td>{{ item.labels?.join(', ') || '' }}</td>
-      <td>{{ item.products?.join(', ') || '' }}</td>
+      <td>{{ item.labels.join(', ') || '' }}</td>
+      <td>{{ item.products.join(', ') || '' }}</td>
       <td>{{ item.videoLink || '' }}</td> 
       <td>{{ item.videoId }}</td>
       <td>{{ item.actualAirDate }}</td>
@@ -66,4 +66,4 @@
     </tr>
   </tbody>
 </table>
-<app-add-koc (saved)="reload()" />
+<app-add-koc (saved)="onSaved()" />
