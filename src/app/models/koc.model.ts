@@ -34,6 +34,8 @@ export interface KocData {
   shares: number;
   saves: number;
 
+  isAd?: boolean;
+
   channel?: string;
   traffic?: string;
   castApproval?: string;

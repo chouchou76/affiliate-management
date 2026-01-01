@@ -12,7 +12,6 @@
       <th>Ghi Chú</th>
       <th>Nhãn</th>
       <th>Sản Phẩm</th>
-      <!-- <th>Trạng Thái</th> -->
       <th>Link Video TikTok</th>
       <th>ID Video TikTok</th>
       <th>Ngày Air TikTok</th>
@@ -32,7 +31,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let item of kocList">
+    <tr *ngFor="let item of kocList$ | async">
       <td (click)="edit(item)">{{ item.channelName }}</td>
       <td><a [href]="item.linkChannel" target="_blank">{{ item.linkChannel }}</a></td>
       <td>{{ item.isDuplicate ? 'Trùng' : 'Không trùng' }}</td>
@@ -42,28 +41,21 @@
       <td>{{ item.cast }}</td>
       <td>{{ item.commission }}</td>
       <td>{{ item.note }}</td>
-      <td>{{ item.labels.join(', ') }}</td>
-      <td>{{ item.products.join(', ') }}</td>
-      <!-- <td>
-        <select
-          #statusSelect
-          [value]="item.status"
-          (change)="updateField(item, 'status', statusSelect.value)">
-        </select>
-      </td> -->
+      <td>{{ item.labels?.join(', ') || '' }}</td>
+      <td>{{ item.products?.join(', ') || '' }}</td>
       <td>{{ item.videoLink || '' }}</td> 
       <td>{{ item.videoId }}</td>
-      <td>{{ item.actualAirDate || '' }}</td>
+      <td>{{ item.actualAirDate }}</td>
       <td>{{ item.sampleSendDate || '' }}</td>
       <td>{{ item.sampleReceiveDate || '' }}</td> 
       <td>{{ item.expectedAirDate || '' }}</td>
       <td>{{ item.title }}</td>
       <td>{{ item.dataRetrievalTime }}</td>
       <td>{{ item.gmv }}</td>
-      <td>{{ item.views }}</td>
-      <td>{{ item.likes }}</td>
-      <td>{{ item.comments }}</td>
-      <td>{{ item.shares }}</td>
+      <td>{{ item.views | number }}</td>
+      <td>{{ item.likes | number }}</td>
+      <td>{{ item.comments | number }}</td>
+      <td>{{ item.shares | number }}</td>
       <td>{{ item.saves }}</td>
       <td>{{ item.status }}</td> 
       <td>{{ item.recontact }}</td>
@@ -74,4 +66,4 @@
     </tr>
   </tbody>
 </table>
-<app-add-koc></app-add-koc>
+<app-add-koc (saved)="reload()" />

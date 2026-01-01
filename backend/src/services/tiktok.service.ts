@@ -1,103 +1,74 @@
-// import fetch from 'node-fetch';
-
-// export async function crawlTikTok(videoLink: string) {
-//   // 1️⃣ Resolve short link
-//   const res = await fetch(videoLink, { redirect: 'follow' });
-//   const finalUrl = res.url;
-
-//   // 2️⃣ Extract video ID
-//   const match = finalUrl.match(/\/video\/(\d+)/);
-//   if (!match) {
-//     throw new Error('Không lấy được video ID');
-//   }
-//   const videoId = match[1];
-
-//   // 3️⃣ Call RapidAPI (FIX PARAM)
-//   const apiRes = await fetch(
-//     `https://tiktok-api23.p.rapidapi.com/api/post/detail?videoId=${videoId}`,
-//     {
-//       headers: {
-//         'X-RapidAPI-Key': process.env.RAPID_API_KEY as string,
-//         'X-RapidAPI-Host': 'tiktok-api23.p.rapidapi.com'
-//       }
-//     }
-//   );
-
-//   const json: any = await apiRes.json();
-
-//   // 🔎 DEBUG RẤT QUAN TRỌNG
-//   console.log('TikTok API response:', JSON.stringify(json, null, 2));
-
-//   const item = json?.data;
-
-//   if (!item) {
-//     throw new Error('Không lấy được data TikTok');
-//   }
-
-//   return {
-//     videoId,
-//     videoLink: finalUrl,
-//     title: item.desc ?? '',
-//     views: item.statistics?.playCount ?? 0,
-//     likes: item.statistics?.diggCount ?? 0,
-//     comments: item.statistics?.commentCount ?? 0,
-//     shares: item.statistics?.shareCount ?? 0,
-//     actualAirDate: new Date(item.createTime * 1000)
-//       .toISOString()
-//       .slice(0, 10)
-//   };
-// }
+import fetch, { HeadersInit } from 'node-fetch';
+import { extractVideoDataFromTikTok } from './extract-video-data.js';
 
 export async function crawlTikTok(videoLink: string) {
-  // 1️⃣ Resolve short link
-  const res = await fetch(videoLink, { redirect: 'follow' });
-  const finalUrl = res.url;
+  const data = await extractVideoDataFromTikTok(videoLink);
 
-  // 2️⃣ Extract video ID
-  const match = finalUrl.match(/\/video\/(\d+)/);
-  if (!match) {
-    throw new Error('Không lấy được video ID');
-  }
-  const videoId = match[1];
-
-  // 3️⃣ Call RapidAPI
-  const apiRes = await fetch(
-    `https://tiktok-api23.p.rapidapi.com/api/post/detail?videoId=${videoId}`,
-    {
-      headers: {
-        'X-RapidAPI-Key': process.env.RAPID_API_KEY as string,
-        'X-RapidAPI-Host': 'tiktok-api23.p.rapidapi.com'
-      }
-    }
-  );
-
-  const json: any = await apiRes.json();
-
-  // 4️⃣ LẤY ĐÚNG STRUCTURE
-  const item = json?.itemInfo?.itemStruct;
-
-  if (!item) {
-    throw new Error('Không lấy được data TikTok');
-  }
-
-  // 5️⃣ MAP DATA CHUẨN
   return {
-    videoId: item.id,
-    videoLink: finalUrl,
-    title: item.desc ?? '',
-    views: Number(item.stats?.playCount ?? 0),
-    likes: Number(item.stats?.diggCount ?? 0),
-    comments: Number(item.stats?.commentCount ?? 0),
-    shares: Number(item.stats?.shareCount ?? 0),
-    actualAirDate: new Date(
-      Number(item.createTime) * 1000
-    ).toISOString().slice(0, 10),
-
-    author: {
-      id: item.author?.id,
-      username: item.author?.uniqueId,
-      nickname: item.author?.nickname,
-      followers: Number(item.authorStats?.followerCount ?? 0)
-    }
+    videoId: data.awemeId,
+    videoLink,
+    title: data.title,
+    views: data.views,
+    likes: data.likes,
+    comments: data.comments,
+    shares: data.shares,
+    saves: data.saves,
+    isAd: data.isAd,
+    actualAirDate: data.createTime,
+    dataRetrievalTime: getDataRetrievalTime()
   };
+}
+
+const UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+const TIKTOK_COOKIE = process.env.TIKTOK_COOKIE;
+if (!TIKTOK_COOKIE) {
+  throw new Error('Missing TIKTOK_COOKIE in env');
+}
+
+const COOKIE = TIKTOK_COOKIE as string;
+
+type TikTokAnchorResponse = {
+  anchors?: any[];
+};
+
+export async function fetchProductAnchors(videoId: string) {
+  const url = `https://www.tiktok.com/api/commerce/item/anchor/?aweme_id=${videoId}`;
+
+  const headers: HeadersInit = {
+    'user-agent': UA,
+    'accept-language': 'vi-VN,vi;q=0.9',
+    cookie: COOKIE
+  };
+
+  const res = await fetch(url, { headers });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch product anchors: ${res.status}`);
+  }
+
+  const json = (await res.json()) as TikTokAnchorResponse;
+
+  return json.anchors ?? [];
+}
+
+function getDataRetrievalTime(): string {
+  const now = new Date();
+
+  // UTC +7
+  const utc7 = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  const day = pad(utc7.getUTCDate());
+  const month = pad(utc7.getUTCMonth() + 1);
+  const year = utc7.getUTCFullYear();
+
+  const hours = pad(utc7.getUTCHours());
+  const minutes = pad(utc7.getUTCMinutes());
+  const seconds = pad(utc7.getUTCSeconds());
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} UTC+7`;
 }

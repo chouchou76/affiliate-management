@@ -4,12 +4,14 @@ import { AddKocComponent } from './add-koc/add-koc.component';
 import { KocListComponent } from './koc-list/koc-list.component';
 import { KocService } from './services/koc.service';
 import { KocData } from './models/koc.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     AddKocComponent,
     KocListComponent
   ],

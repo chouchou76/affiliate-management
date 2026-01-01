@@ -1,21 +1,18 @@
-<!-- NÚT MỞ POPUP -->
-<button class="open-btn" (click)="openPopup()">➕ Thêm KOC</button>
+<!-- <button class="open-btn" (click)="openPopup()">➕ Thêm KOC</button>
 
-<!-- POPUP -->
 <div class="popup-container" *ngIf="isPopupOpen">
 
-  <!-- HEADER -->
+
   <div class="popup-header">
     <h2>{{ kocData.channelName || 'Thêm KOC' }}</h2>
     <button class="close-btn" (click)="closePopup()">×</button>
   </div>
 
-  <!-- CONTENT -->
+
   <div class="popup-content">
 
-    <form (ngSubmit)="saveKoc()" class="form-grid">
+    <form #kocForm="ngForm" (ngSubmit)="saveKoc()" class="form-grid">
 
-      <!-- TÊN KÊNH + LINK KÊNH -->
       <div class="field-row">
         <label>Tên Kênh</label>
         <input type="text" [(ngModel)]="kocData.channelName" name="channelName">
@@ -60,7 +57,7 @@
 
       <div class="field-row">
         <label>Ghi Chú</label>
-        <textarea rows="2" [(ngModel)]="kocData.note" name="note"></textarea>
+        <textarea rows="1" [(ngModel)]="kocData.note" name="note"></textarea>
       </div>
 
       <div class="field-row">
@@ -68,20 +65,19 @@
         <input type="text" [(ngModel)]="kocData.recontact" name="recontact">
       </div>
 
-      <!-- NHÃN -->
       <div class="form-row full">
         <div class="form-field full">
           <div class="field-row">
-            <label>Nhãn</label>
+            <label>Nhãn Hàng</label>
 
             <div class="tags-container">
-              <!-- CHIP -->
+   
               <span class="tag green" *ngFor="let label of kocData.labels; let i = index">
                 {{ label }}
                 <span class="remove" (click)="removeTag(kocData.labels, i)">×</span>
               </span>
 
-              <!-- SELECT -->
+    
               <select (change)="addSelectTag(kocData.labels, $event)" name="labels">
                 <option value="" selected disabled>Chọn nhãn</option>
                 <option *ngFor="let l of availableLabels" [value]="l">
@@ -94,20 +90,19 @@
         </div>
       </div>
 
-      <!-- SẢN PHẨM -->
       <div class="form-row full">
         <div class="form-field full">
           <div class="field-row">
             <label>Sản Phẩm</label>
 
             <div class="tags-container">
-              <!-- CHIP -->
+             
               <span class="tag pink" *ngFor="let product of kocData.products; let i = index">
                 {{ product }}
                 <span class="remove" (click)="removeTag(kocData.products, i)">×</span>
               </span>
 
-              <!-- SELECT -->
+             
               <select (change)="addSelectTag(kocData.products, $event)" name="products">
                 <option value="" selected disabled>Chọn sản phẩm</option>
                 <option *ngFor="let p of availableProducts" [value]="p">
@@ -120,7 +115,6 @@
         </div>
       </div>
 
-      <!-- TRẠNG THÁI -->
       <div class="form-row full">
         <div class="form-field full">
           <div class="field-row">
@@ -154,9 +148,23 @@
       </div>
 
       <div class="field-row">
-        <label>Link Video TikTok</label>
-        <input type="text" [(ngModel)]="kocData.videoLink" name="videoLink">
+        <label>Link video TikTok</label>
+        <input
+          type="text"
+          [(ngModel)]="kocData.videoLink"
+          name="videoLink"
+        />
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="crawlTikTok()"
+          [disabled]="isCrawling"
+        >
+          {{ isCrawling ? 'Đang cào...' : 'Cào dữ liệu' }}
+        </button>
       </div>
+
 
       <div class="field-row">
         <label>ID Video TikTok</label>
@@ -203,7 +211,6 @@
         <input type="text" [(ngModel)]="kocData.dataRetrievalTime" name="dataRetrievalTime" readonly>
       </div>
 
-      <!-- ACTION -->
       <div class="form-actions full">
         <button type="submit" class="btn-save">💾 Lưu</button>
         <button type="button" class="btn-cancel" (click)="closePopup()">Hủy</button>
@@ -213,3 +220,179 @@
 
   </div>
 </div>
+ -->
+
+<button class="open-btn" (click)="openPopup()">➕ Thêm KOC</button>
+
+<div class="popup-container" *ngIf="isPopupOpen">
+  <div class="popup-header">
+    <h2>{{ form.value.channelName || 'Thêm KOC' }}</h2>
+    <button class="close-btn" (click)="closePopup()">×</button>
+  </div>
+
+  <div class="popup-content">
+    <form [formGroup]="form" (ngSubmit)="saveKoc()" class="form-grid">
+
+      <!-- BASIC INFO -->
+      <div class="field-row">
+        <label>Tên Kênh</label>
+        <input type="text" formControlName="channelName">
+      </div>
+
+      <div class="field-row">
+        <label>Link Kênh</label>
+        <input type="text" formControlName="linkChannel">
+      </div>
+
+      <div class="field-row">
+        <label>Ngày Tìm</label>
+        <input type="date" formControlName="dateFound">
+      </div>
+
+      <div class="field-row">
+        <label>Trùng</label>
+        <input type="checkbox" formControlName="isDuplicate">
+      </div>
+
+      <div class="field-row">
+        <label>Nhân Viên</label>
+        <input type="text" formControlName="staff" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Quản Lý</label>
+        <input type="text" formControlName="manager" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Cast</label>
+        <input type="number" formControlName="cast">
+      </div>
+
+      <div class="field-row">
+        <label>Hoa Hồng</label>
+        <input type="text" formControlName="commission">
+      </div>
+
+      <div class="field-row">
+        <label>Ghi Chú</label>
+        <textarea rows="1" formControlName="note"></textarea>
+      </div>
+
+      <div class="field-row">
+        <label>Liên Hệ Lại</label>
+        <input type="text" formControlName="recontact">
+      </div>
+
+      <!-- LABELS -->
+      <div class="field-row">
+        <label>Nhãn hàng</label>
+        <span class="tag green" *ngFor="let l of form.value.labels; let i=index">
+          {{ l }} <span (click)="removeTag('labels', i)">×</span>
+        </span>
+        <select (change)="addSelectTag('labels', $event)">
+          <option value="">Chọn nhãn</option>
+          <option *ngFor="let l of availableLabels" [value]="l">{{ l }}</option>
+        </select>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="field-row">
+        <label>Sản phẩm</label>
+        <span class="tag pink" *ngFor="let p of form.value.products; let i=index">
+          {{ p }} <span (click)="removeTag('products', i)">×</span>
+        </span>
+        <select (change)="addSelectTag('products', $event)">
+          <option value="">Chọn sản phẩm</option>
+          <option *ngFor="let p of availableProducts" [value]="p">{{ p }}</option>
+        </select>
+      </div>
+
+      <!-- STATUS -->
+      <div class="field-row">
+        <label>Trạng thái</label>
+        <select formControlName="status">
+          <option value="">Chọn trạng thái</option>
+          <option *ngFor="let s of availableStatuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <!-- TIMELINE -->
+      <div class="field-row">
+        <label>Ngày Gửi Mẫu</label>
+        <input type="date" formControlName="sampleSendDate">
+      </div>
+
+      <div class="field-row">
+        <label>Ngày Air Dự Kiến</label>
+        <input type="date" formControlName="expectedAirDate">
+      </div>
+
+      <div class="field-row">
+        <label>Ngày Air Thực Tế</label>
+        <input type="date" formControlName="actualAirDate">
+      </div>
+
+      <!-- TIKTOK -->
+      <div class="field-row">
+        <label>Link video TikTok</label>
+        <input type="text" formControlName="videoLink">
+        <button type="button" (click)="crawlTikTok()" [disabled]="isCrawling">
+          {{ isCrawling ? 'Đang cào...' : 'Cào dữ liệu' }}
+        </button>
+      </div>
+
+      <div class="field-row">
+        <label>ID Video TikTok</label>
+        <input type="text" formControlName="videoId" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>GMV</label>
+        <input type="number" formControlName="gmv" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>View</label>
+        <input type="number" formControlName="views" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Like</label>
+        <input type="number" formControlName="likes" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Comment</label>
+        <input type="number" formControlName="comments" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Share</label>
+        <input type="number" formControlName="shares" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Save</label>
+        <input type="number" formControlName="saves" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Title</label>
+        <input type="text" formControlName="title" readonly>
+      </div>
+
+      <div class="field-row">
+        <label>Data Retrieval Time</label>
+        <input type="text" formControlName="dataRetrievalTime" readonly>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit">💾 Lưu</button>
+        <button type="button" (click)="closePopup()">Hủy</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+

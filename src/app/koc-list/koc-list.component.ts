@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
 import { AddKocComponent } from '../add-koc/add-koc.component';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-koc-list',
@@ -21,6 +22,8 @@ export class KocListComponent implements AfterViewInit {
   @Input() kocList: KocData[] = [];
 
   @ViewChild(AddKocComponent) addKocPopup!: AddKocComponent;
+
+  kocList$!: Observable<any[]>;
 
   statuses: string[] = [
     'Chưa liên hệ',
@@ -71,6 +74,19 @@ export class KocListComponent implements AfterViewInit {
     this.kocService.updateKoc(item.id, {
       [field]: value
     });
+  }
+
+  reload() {
+    const kocList$ = this.kocService.getKocs().pipe(
+      map(data =>
+        data.map(item => ({
+          ...item,
+          labels: item.labels ?? [],
+          products: item.products ?? [],
+          isDuplicate: false
+        }))
+      )
+    );
   }
 
   private markDuplicates() {
