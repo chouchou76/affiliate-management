@@ -41,5 +41,17 @@ export interface KocData {
   castApproval?: string;
   shopManagement?: string;
 
-  createdAt: any; // Firestore Timestamp
+  createdAt: any;
+  selected: boolean;
+  crawlStatus?: 'idle' | 'crawling' | 'success' | 'error';
+}
+
+export interface CrawlLog {
+  crawledAt: string; 
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  saves: number;
+  isAd: boolean;
 }
