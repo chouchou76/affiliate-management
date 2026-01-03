@@ -1,8 +1,10 @@
-<div *ngIf="kocList$ | async as list" class="table-wrapper">
-
-  <div class="table-toolbar">
+<div *ngIf="kocList$ | async as list" class="table-toolbar">
     <app-add-koc #addKoc></app-add-koc>
 
+    <button class="btn btn-primary" routerLink="/dashboard" routerLinkActive="active">
+      📊 Tổng Quan
+    </button>
+    
     <button class="btn" (click)="bulkCrawl(list)">
       ⚡ Bulk Crawl
     </button>
@@ -40,8 +42,9 @@
       ></app-sort-builder>
     </div>
   </div>
-
-  <table class="koc-table">
+  
+<div *ngIf="kocList$ | async as list" class="table-wrapper">
+    <table class="koc-table">
     <thead>
       <tr>
         <th class="col-checkbox">

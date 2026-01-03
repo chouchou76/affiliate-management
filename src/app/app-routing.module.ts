@@ -7,9 +7,8 @@ import { VideoListComponent } from './video-list/video-list.component';
 import { AddKocComponent } from './add-koc/add-koc.component';
 
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
+  { path: 'dashboard', component: DashboardComponent },
   { path: 'koc-list', component: KocListComponent },
-  { path: 'video-list', component: VideoListComponent },
   { path: 'add-koc', component: AddKocComponent },
 ];
 

@@ -40,10 +40,8 @@ export interface FilterFieldConfig {
 
 export const FILTER_FIELDS: FilterFieldConfig[] = [
   { field: 'channelName', label: 'Tên kênh', type: 'text' },
-  // { field: 'staff', label: 'Nhân viên', type: 'text' },
-  // { field: 'manager', label: 'Quản lý', type: 'text' },
-  { field: 'cast', label: 'Cast', type: 'text' },
-  { field: 'commission', label: 'Hoa hồng', type: 'text' },
+  { field: 'cast', label: 'Cast', type: 'number' },
+  { field: 'commission', label: 'Hoa hồng', type: 'number' },
   { field: 'note', label: 'Ghi chú', type: 'text' },
   { field: 'labels', label: 'Nhãn hàng', type: 'text' },
   { field: 'products', label: 'Sản phẩm', type: 'text' },

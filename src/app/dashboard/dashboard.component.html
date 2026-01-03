@@ -1,10 +1,51 @@
-<div class="container">
-  <h1 class="title">TikTok Marketing Dashboard</h1>
+<!-- dashboard.component.html -->
+<div class="dashboard">
+  <h2>📊 Tổng Quan Dữ Liệu KOC</h2>
 
-  <div class="buttons">
-    <button routerLink="/koc-list" class="btn">Xem Danh Sách KOC</button>
-    <button routerLink="/video-list" class="btn">Xem Danh Sách Video</button>
-    <button routerLink="/add-koc" class="btn">Thêm KOC</button>
+  <!-- Thẻ tổng kết -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h4>Tổng Video</h4>
+      <p class="value">{{ stats.totalVideos | number }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Tổng GMV</h4>
+      <p class="value">{{ stats.totalGMV | currency:'VND':'symbol':'1.0-0' }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Tổng View</h4>
+      <p class="value">{{ stats.totalViews | number }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Số KOC</h4>
+      <p class="value">{{ stats.totalKOCs | number }}</p>
+    </div>
   </div>
-  <router-outlet></router-outlet>
+
+  <!-- Chọn khoảng thời gian -->
+  <div class="chart-controls">
+    <button 
+      class="btn" 
+      [class.active]="period === 'week'"
+      (click)="changePeriod('week')">
+      Tuần
+    </button>
+    <button 
+      class="btn" 
+      [class.active]="period === 'month'"
+      (click)="changePeriod('month')">
+      Tháng
+    </button>
+    <button 
+      class="btn" 
+      [class.active]="period === '3months'"
+      (click)="changePeriod('3months')">
+      3 Tháng
+    </button>
+  </div>
+
+  <!-- Biểu đồ -->
+  <div class="chart-container">
+    <canvas #chart></canvas>
+  </div>
 </div>

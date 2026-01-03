@@ -8,8 +8,8 @@ export class FilterService {
   private filtersSubject = new BehaviorSubject<FieldFilter[]>([]);
   filters$ = this.filtersSubject.asObservable();
 
-  set(filters: FieldFilter[]) {
-    this.filtersSubject.next(filters);
+  setFilters(filters: FieldFilter[] | null) {
+    this.filtersSubject.next(filters ?? []);
   }
 
   add(filter: FieldFilter) {

@@ -142,6 +142,10 @@
 /* Toolbar styles */
 .table-toolbar {
   display: flex;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 50;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
@@ -149,6 +153,8 @@
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
   position: relative;
+  min-width: fit-content;
+
 }
 
 /* Button styles */
@@ -187,6 +193,7 @@
 .dropdown-wrapper {
   position: relative;
   display: inline-block;
+  z-index: 60;
 }
 
 .dropdown-content {
@@ -301,4 +308,24 @@
 
 .koc-table td button:hover {
   opacity: 0.7;
+}
+html,
+body {
+  overflow-x: hidden;
+}
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
 }

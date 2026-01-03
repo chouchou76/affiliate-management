@@ -1,4 +1,4 @@
-<div class="filter-row" *ngFor="let rule of filters; let i = index">
+<!-- <div class="filter-row" *ngFor="let rule of filters; let i = index">
 
   <select [(ngModel)]="rule.field"
           (ngModelChange)="updateRule(i, rule)">
@@ -27,4 +27,74 @@
   <button (click)="removeRule(i)">✖</button>
 </div>
 
-<button (click)="addRule()">➕ Add filter</button>
+<button (click)="addRule()">➕ Add filter</button> -->
+
+<div class="filter-panel">
+  <!-- HEADER -->
+  <div class="panel-header">
+    <h3>Bộ lọc</h3>
+    <span class="rule-count" *ngIf="localFilters.length > 0">
+      {{ localFilters.length }} quy tắc
+    </span>
+  </div>
+
+  <!-- RULES LIST -->
+  <div class="rules-list">
+    <div class="rule-row" *ngFor="let rule of localFilters; let i = index">
+      <select
+        class="field-select"
+        [(ngModel)]="rule.field"
+        (ngModelChange)="onFieldChange(rule)"
+      >
+        <option value="" disabled>Chọn trường</option>
+        <option *ngFor="let f of fields" [value]="f.field">
+          {{ f.label }}
+        </option>
+      </select>
+
+      <select
+        class="operator-select"
+        [(ngModel)]="rule.operator"
+        (ngModelChange)="emit()"
+      >
+        <option *ngFor="let op of getOperatorsForField(rule.field)" [value]="op.value">
+          {{ op.label }}
+        </option>
+      </select>
+
+      <!-- VALUE INPUT -->
+      <input
+        *ngIf="getFieldType(rule.field) === 'text'"
+        class="value-input"
+        type="text"
+        placeholder="Nhập giá trị"
+        [(ngModel)]="rule.value"
+        (ngModelChange)="emit()"
+      />
+
+      <input
+        *ngIf="getFieldType(rule.field) === 'date'"
+        class="value-input"
+        type="date"
+        [(ngModel)]="rule.value"
+        (ngModelChange)="emit()"
+      />
+
+      <!-- REMOVE BUTTON -->
+      <button class="remove-btn" (click)="removeRule(i)" title="Xóa quy tắc">
+        ×
+      </button>
+    </div>
+
+    <!-- NO RULES PLACEHOLDER -->
+    <div class="no-rules" *ngIf="localFilters.length === 0">
+      <p>Chưa có bộ lọc nào</p>
+      <span>Thêm quy tắc để lọc dữ liệu</span>
+    </div>
+  </div>
+
+  <!-- ADD BUTTON -->
+  <button class="add-rule-btn" (click)="addRule()">
+    + Thêm bộ lọc
+  </button>
+</div>

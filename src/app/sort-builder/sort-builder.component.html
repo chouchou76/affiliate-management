@@ -1,4 +1,4 @@
-<!-- sort-builder.component.html (ĐÃ SỬA HOÀN CHỈNH) -->
+<!-- sort-builder.component.html (ĐÃ CẢI THIỆN GIAO DIỆN) -->
 <div class="sort-panel">
   <!-- HEADER -->
   <div class="header">
@@ -8,53 +8,58 @@
 
   <!-- AUTO SORT TOGGLE -->
   <div class="auto-sort">
-    <label>Tự động sắp xếp</label>
+    <label class="auto-sort-label">Tự động sắp xếp</label>
     <input type="checkbox" [(ngModel)]="autoSort" (change)="onAutoSortChange()" />
   </div>
 
   <!-- CURRENT RULES -->
   <div class="rules-list">
-    <div class="rule-item" *ngFor="let rule of sortRules; let i = index">
-      <div class="rule-tag">
-        <span class="field-label">
-          {{ getFieldLabel(rule.field) }}
-        </span>
+    <div class="rule-chip" *ngFor="let rule of sortRules; let i = index">
+      <span class="field-label">
+        {{ getFieldLabel(rule.field) }}
+      </span>
 
-        <div class="direction-buttons">
-          <button
-            class="dir-btn"
-            [class.active]="rule.direction === 'asc'"
-            (click)="changeDirection(i, 'asc')"
-          >
-            {{ getDirectionLabel(rule.type, 'asc') }}
-          </button>
-          <button
-            class="dir-btn"
-            [class.active]="rule.direction === 'desc'"
-            (click)="changeDirection(i, 'desc')"
-          >
-            {{ getDirectionLabel(rule.type, 'desc') }}
-          </button>
-        </div>
-
-        <button class="remove-rule" (click)="removeRule(i)" title="Xóa quy tắc">
-          ×
+      <div class="direction-segment">
+        <button
+          class="dir-btn"
+          [class.active]="rule.direction === 'asc'"
+          (click)="changeDirection(i, 'asc')"
+        >
+          {{ getDirectionLabel(rule.type, 'asc') }}
+        </button>
+        <button
+          class="dir-btn"
+          [class.active]="rule.direction === 'desc'"
+          (click)="changeDirection(i, 'desc')"
+        >
+          {{ getDirectionLabel(rule.type, 'desc') }}
         </button>
       </div>
+
+      <button class="remove-btn" (click)="removeRule(i)" title="Xóa quy tắc">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+          <path d="M6 4l8 8m0-8l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
 
     <div class="no-rules" *ngIf="sortRules.length === 0">
-      Chưa có quy tắc sắp xếp
+      Chưa có quy tắc sắp xếp nào
     </div>
   </div>
 
   <!-- ADD NEW RULE -->
   <div class="add-rule">
-    <select (change)="addRule($event)">
-      <option value="" disabled selected>Chọn trường</option>
-      <option *ngFor="let f of availableFields" [value]="f.field">
-        {{ f.label }}
-      </option>
-    </select>
+    <div class="custom-select">
+      <select (change)="addRule($event)">
+        <option value="" disabled selected>Chọn trường</option>
+        <option *ngFor="let f of availableFields" [value]="f.field">
+          {{ f.label }}
+        </option>
+      </select>
+      <svg class="select-arrow" viewBox="0 0 10 6">
+        <path d="M0 0l5 6 5-6z" fill="currentColor"/>
+      </svg>
+    </div>
   </div>
 </div>

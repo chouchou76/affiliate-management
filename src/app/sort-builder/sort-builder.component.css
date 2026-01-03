@@ -1,68 +1,95 @@
+/* sort-builder.component.css (ĐÃ CẢI THIỆN ĐẸP HƠN) */
 .sort-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
-  min-width: 320px;
-  background: #fff;
+  gap: 20px;
+  padding: 20px;
+  min-width: 340px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: #111827;
 }
 
 .help-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #3b82f6;
   color: white;
-  font-size: 12px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: help;
 }
 
-.current-rule {
-  margin-top: 8px;
+.auto-sort {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #374151;
 }
 
-.rule-tag {
+.auto-sort-label {
+  font-weight: 500;
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-chip {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  background: #f3f4f6;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.rule-chip:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .field-label {
   font-weight: 500;
-  color: #374151;
+  color: #1e293b;
+  font-size: 14px;
 }
 
-.direction-buttons {
+.direction-segment {
   display: flex;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #d1d5db;
+  border: 1px solid #cbd5e1;
+  background: white;
 }
 
 .dir-btn {
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: white;
   border: none;
   font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
 }
 
 .dir-btn.active {
@@ -71,51 +98,81 @@
 }
 
 .dir-btn:hover:not(.active) {
-  background: #f3f4f6;
+  background: #f1f5f9;
 }
 
-.remove-rule {
+.remove-btn {
   margin-left: 8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #fee2e2;
-  color: #ef4444;
+  padding: 6px;
+  background: transparent;
   border: none;
-  font-size: 18px;
+  color: #ef4444;
   cursor: pointer;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s;
 }
 
-.remove-rule:hover {
-  background: #fecaca;
+.remove-btn:hover {
+  background: #fee2e2;
 }
 
-.no-sort-placeholder {
+.no-rules {
   text-align: center;
-  color: #9ca3af;
+  color: #94a3b8;
   font-size: 14px;
-  padding: 20px 0;
+  padding: 24px 0;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
 }
 
-.add-field {
+/* Custom select đẹp hơn */
+.add-rule {
   margin-top: 8px;
 }
 
-.add-field select {
+.custom-select {
+  position: relative;
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 14px;
-  background: white;
 }
 
-.add-field select:focus {
+.custom-select select {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: white;
+  font-size: 14px;
+  color: #1e293b;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.custom-select select:focus {
   outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb33;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
+.custom-select select:hover {
+  border-color: #94a3b8;
+}
+
+.custom-select option {
+  padding: 10px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748b;
+  width: 10px;
+  height: 6px;
+}

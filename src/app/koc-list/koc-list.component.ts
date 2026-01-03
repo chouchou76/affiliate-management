@@ -22,7 +22,6 @@ import { SortBuilderComponent, SortRule } from '../sort-builder/sort-builder.com
 })
 export class KocListComponent {
 
-  // @ViewChild(AddKocComponent) addKocPopup!: AddKocComponent;
 
   @ViewChild('addKoc') addKoc!: AddKocComponent;
 
@@ -32,6 +31,7 @@ export class KocListComponent {
   isSortOpen = false;
  
   currentSorts: SortRule[] = [];
+  currentFilters: FieldFilter[] = [];
 
 
   /** ===== STREAM ===== */
@@ -319,39 +319,12 @@ export class KocListComponent {
     this.showFilter = !this.showFilter;
   }
 
-  onFiltersChange(filters: FieldFilter[]) {
-    this.filters = filters;
-    this.filters$.next(filters);
+  onFiltersChange(filters: FieldFilter[] | null) {
+    this.filters = filters ?? [];
+    this.filterService.setFilters(this.filters);
   }
 
-  // private applySort(list: any[], sort: SortConfig) {
-  //   const dir = sort.direction === 'asc' ? 1 : -1;
-
-  //   return [...list].sort((a, b) => {
-  //     const v1 = a[sort.field];
-  //     const v2 = b[sort.field];
-
-  //     if (v1 == null) return 1;
-  //     if (v2 == null) return -1;
-
-  //     switch (sort.type) {
-  //       case 'text':
-  //         return v1.toString()
-  //           .localeCompare(v2.toString(), 'vi', { sensitivity: 'base' }) * dir;
-
-  //       case 'number':
-  //         return (Number(v1) - Number(v2)) * dir;
-
-  //       case 'date':
-  //         return (new Date(v1).getTime() - new Date(v2).getTime()) * dir;
-
-  //       default:
-  //         return 0;
-  //     }
-  //   });
-  // }
-
-  toggleFilter() {
+    toggleFilter() {
     this.showFilter = !this.showFilter;
     if (this.showFilter) {
       this.isSortOpen = false; // đóng sort nếu mở filter
@@ -368,7 +341,7 @@ export class KocListComponent {
   getTagColor(text: string): string {
     const colors = [
       '#1abc9c', '#3498db', '#9b59b6',
-      '#e67e22', '#e74c3c', '#2ecc71',
+      '#e67e22', '#2ecc71',
       '#f39c12', '#16a085'
     ];
 
@@ -436,15 +409,13 @@ export class KocListComponent {
   showFullLink(link: string | undefined) {
     if (link) {
       alert(link);
-      // Hoặc mở modal, copy vào clipboard, v.v.
+
     }
-    // Nếu link là undefined hoặc rỗng, không làm gì
   }
 
   onSortChange(sorts: SortRule[] | null) {
-  // sorts có thể là null (khi clear all rules) hoặc mảng
-  this.currentSorts = sorts ? [...sorts] : [];
-  this.sort$.next(sorts); // ← truyền thẳng, không cần kiểm tra length
-}
+    this.currentSorts = sorts ? [...sorts] : [];
+    this.sort$.next(sorts); // ← truyền thẳng, không cần kiểm tra length
+  }
 
 }
