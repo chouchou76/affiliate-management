@@ -111,15 +111,15 @@
         <td>{{ item.manager }}</td>
         <td>{{ item.dateFound }}</td>
         <td>{{ item.cast }}</td>
-        <td>{{ item.commission }}</td>
+        <td>{{ item.commission }}%</td>
         <td>{{ item.note }}</td>
         <td>{{ item.labels.join(', ') }}</td>
         <td>{{ item.products.join(', ') }}</td>
         <td>{{ item.status }}</td>
         
-        <td>{{ item.sampleSendDate }}</td>
-        <td>{{ item.expectedAirDate }}</td>
-        <td>{{ item.actualAirDate }}</td>
+        <td>{{ item.sampleSendDate | date:'dd-MM-yyyy' }}</td>
+        <td>{{ item.expectedAirDate | date:'dd-MM-yyyy' }}</td>
+        <td>{{ item.actualAirDate | date:'dd-MM-yyyy' }}</td>
         <td>{{ item.videoLink }}</td>
         <td>{{ item.videoId }}</td>
         <td>{{ item.dataRetrievalTime }}</td>

@@ -1,44 +1,65 @@
-<div class="sort-panel" *ngIf="sort">
+<div class="sort-panel">
+  <!-- HEADER -->
+  <div class="header">
+    <h3>Sắp xếp theo trường</h3>
+    <span class="help-icon">?</span>
+  </div>
 
-  <!-- FIELD -->
-  <select
-    [ngModel]="sort.field"
-    (ngModelChange)="onFieldChange($event)"
-  >
-    <option
-      *ngFor="let f of sortableFields"
-      [value]="f.field"
+  <!-- CURRENT SORT RULE (nếu có) -->
+  <div class="current-rule" *ngIf="sort; else noSort">
+    <div class="rule-tag">
+      <span class="field-label">
+        {{ getFieldLabel(sort.field) }}
+      </span>
+
+      <div class="direction-buttons">
+        <button
+          class="dir-btn"
+          [class.active]="sort.direction === 'asc'"
+          (click)="onDirectionChange('asc')"
+        >
+          {{ getDirectionLabel('asc') }}
+        </button>
+        <button
+          class="dir-btn"
+          [class.active]="sort.direction === 'desc'"
+          (click)="onDirectionChange('desc')"
+        >
+          {{ getDirectionLabel('desc') }}
+        </button>
+      </div>
+
+      <button class="remove-rule" (click)="clear()" title="Xóa sắp xếp">
+        ×
+      </button>
+    </div>
+  </div>
+
+  <!-- NO SORT YET -->
+  <ng-template #noSort>
+    <div class="no-sort-placeholder">
+      <p>Chưa có quy tắc sắp xếp</p>
+    </div>
+  </ng-template>
+
+  <!-- ADD / CHANGE FIELD -->
+  <div class="add-field">
+    <select
+      [ngModel]="sort?.field || ''"
+      (ngModelChange)="onFieldChange($event)"
+      placeholder="Chọn trường"
     >
-      {{ f.label }}
-    </option>
-  </select>
+      <option value="" disabled [selected]="!sort">
+        Chọn trường
+      </option>
+      <option
+        *ngFor="let f of sortableFields"
+        [value]="f.field"
+      >
+        {{ f.label }}
+      </option>
+    </select>
+  </div>
 
-  <!-- DIRECTION -->
-  <select
-    [ngModel]="sort.direction"
-    (ngModelChange)="onDirectionChange($event)"
-  >
-    <option value="asc">
-      {{
-        sort.type === 'text'
-          ? 'A → Z'
-          : sort.type === 'date'
-            ? 'Cũ → Mới'
-            : '0 → 9'
-      }}
-    </option>
-
-    <option value="desc">
-      {{
-        sort.type === 'text'
-          ? 'Z → A'
-          : sort.type === 'date'
-            ? 'Mới → Cũ'
-            : '9 → 0'
-      }}
-    </option>
-  </select>
-
-  <button type="button" (click)="clear()">✖ Clear</button>
 
 </div>
