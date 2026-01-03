@@ -1,228 +1,28 @@
-// import { Component, EventEmitter, Output } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { FormsModule } from '@angular/forms';
-// import { KocService } from '../services/koc.service';
-// import { KocData } from '../models/koc.model';
-// import { TikTokApiService } from '../services/tiktok-api.service';
-
-// @Component({
-//   selector: 'app-add-koc',
-//   standalone: true,
-//   imports: [CommonModule, FormsModule],
-//   templateUrl: './add-koc.component.html',
-//   styleUrls: ['./add-koc.component.css']
-// })
-// export class AddKocComponent {
-
-//   isPopupOpen = false;
-//   isSubmitting = false;
-//   isEditMode = false;
-//   isCrawling = false;
-
-//   selectedLabels: string[] = [];
-//   selectedProducts: string[] = [];
-
-
-//   kocData: KocData = this.initForm();
-
-//   @Output() saved = new EventEmitter<void>();
-//   @Output() closed = new EventEmitter<void>();
-
-//   availableLabels = ['ENZYCO', 'HAPAKU'];
-//   availableProducts = ['Rửa Bát', 'Ngâm Rau', 'Nước Lau Sàn', 'Túi Than'];
-//   availableStatuses = [
-//     'Chưa liên hệ',
-//     'Đã liên hệ',
-//     'Đồng ý',
-//     'Từ chối',
-//     'Đã gửi mẫu',
-//     'Đã nhận mẫu',
-//     'Đã lên video'
-//   ];
-
-//   constructor(
-//     private kocService: KocService,
-//     private tiktokApi: TikTokApiService
-//   ) {}
-
-//   openPopup(koc?: KocData) {
-//     this.isPopupOpen = true;
-
-//     if (koc) {
-//       this.isEditMode = true;
-//       this.kocData = { ...koc }; // clone tránh mutate list
-//     } else {
-//       this.isEditMode = false;
-//       this.kocData = this.initForm();
-//     }
-//   }
-
-//   closePopup() {
-//     this.isPopupOpen = false;
-//     this.isEditMode = false;
-//     this.resetForm();
-//     this.closed.emit();
-//   }
-
-//   addTag(list: string[], input: HTMLInputElement) { 
-//     const value = input.value.trim(); 
-//     if (value && !list.includes(value)) { 
-//       list.push(value); 
-//     } 
-//     input.value = ''; 
-//   } 
-
-//   addSelectTag(targetArray: string[], event: Event) {
-//     const value = (event.target as HTMLSelectElement).value;
-//     if (!value) return;
-
-//     if (!targetArray.includes(value)) {
-//       targetArray.push(value);
-//     }
-
-//     // reset select
-//     (event.target as HTMLSelectElement).value = '';
-//   }
-
-//   removeTag(list: string[], index: number) { 
-//     list.splice(index, 1); 
-//   }
-  
-//   async saveKoc() {
-//     if (!this.kocData.channelName) {
-//       alert('Vui lòng nhập Tên kênh');
-//       return;
-//     }
-
-//     this.isSubmitting = true;
-
-//     try {
-//       const payload: Partial<KocData> = {
-//   channelName: this.kocData.channelName,
-//   linkChannel: `https://www.tiktok.com/@${this.kocData.channelName}`,
-//   videoLink: this.kocData.videoLink ?? undefined,
-//   videoId: this.kocData.videoId ?? undefined,
-//   title: this.kocData.title ?? '',
-//   views: this.kocData.views,
-//   likes: this.kocData.likes,
-//   comments: this.kocData.comments,
-//   shares: this.kocData.shares,
-//   saves: this.kocData.saves,
-//   isAd: this.kocData.isAd,
-//   actualAirDate: this.kocData.actualAirDate,
-//   dataRetrievalTime: this.kocData.dataRetrievalTime
-// };
-
-
-//       if (this.isEditMode && this.kocData.id) {
-//         // ✅ UPDATE – KHÔNG TẠO ID MỚI
-//         await this.kocService.updateKoc(this.kocData.id, payload);
-//       } else {
-//         // ✅ ADD NEW
-//         await this.kocService.addKoc({
-//           ...payload,
-//           createdAt: new Date()
-//         } as KocData);
-//       }
-
-//       this.saved.emit();
-//       this.closePopup();
-//     } catch (e) {
-//       console.error(e);
-//       alert('❌ Lỗi khi lưu');
-//     } finally {
-//       this.isSubmitting = false;
-//     }
-//   }
-
-//     private initForm(): KocData {
-//     return {
-//       id: '',
-//       channelName: '',
-//       linkChannel: '',
-//       isDuplicate: false,
-//       dateFound: '',
-
-//       videoLink: '',
-//       videoId: '',
-//       title: '',
-
-//       cast: '',
-//       commission: '',
-//       note: '',
-//       recontact: '',
-
-//       labels: [] as string[],
-//       products: [] as string[],
-//       status: '',
-
-//       staff: 'Lê Châu',
-//       manager: 'Trưởng Team',
-
-//       gmv: 0,
-//       views: 0,
-//       likes: 0,
-//       comments: 0,
-//       shares: 0,
-//       saves: 0,
-
-//       isAd: false,
-//       actualAirDate: '',
-//       dataRetrievalTime: '',
-
-//       createdAt: null
-//     };
-//   }
-
-//   private resetForm() {
-//     this.kocData = this.initForm();
-//   }
-
-//   crawlTikTok() {
-//     if (!this.kocData.videoLink) {
-//       alert('Vui lòng nhập link video TikTok');
-//       return;
-//     }
-
-//     this.isCrawling = true;
-
-//     this.tiktokApi.crawlVideo(this.kocData.videoLink).subscribe({
-//       next: (data) => {
-//         // 🔥 Auto fill data
-//         this.kocData.videoId = data.videoId ?? '';
-//         this.kocData.videoLink = data.videoLink ?? '';
-//         this.kocData.views = data.views;
-//         this.kocData.likes = data.likes;
-//         this.kocData.comments = data.comments;
-//         this.kocData.shares = data.shares;
-//         this.kocData.saves = data.saves;
-//         this.kocData.title = data.title;
-//         this.kocData.actualAirDate = data.actualAirDate;
-//         this.kocData.isAd = data.isAd;
-//         this.kocData.dataRetrievalTime = data.dataRetrievalTime;
-
-//         alert('✅ Cào dữ liệu thành công');
-//         this.isCrawling = false;
-//       },
-//       error: (err) => {
-//         console.error(err);
-//         alert('❌ Không cào được dữ liệu TikTok');
-//         this.isCrawling = false;
-//       }
-//     });
-//   }
-// }
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  orderBy
+} from 'firebase/firestore';
 import { KocService } from '../services/koc.service';
 import { TikTokApiService } from '../services/tiktok-api.service';
 import { KocData } from '../models/koc.model';
+import { HostListener } from '@angular/core';
+
+interface Product {
+  id: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-add-koc',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './add-koc.component.html',
   styleUrls: ['./add-koc.component.css']
 })
@@ -232,11 +32,53 @@ export class AddKocComponent {
   isSubmitting = false;
   isEditMode = false;
   isCrawling = false;
+  isOpen = false;
+  kocForm!: FormGroup;
+  private editingId: string | null = null;
+
+  products: Product[] = [];
+  filteredProducts: Product[] = [];
+  productInput = '';
+  showProductDropdown = false;
+  firestore = getFirestore();
+
+  colorMap = {
+    products: new Map<string, string>(),
+    statuses: new Map<string, string>()
+  };
+
+  readonly COLOR_CLASSES = [
+    'status-blue',
+    'status-green',
+    'status-purple',
+    'status-red',
+    'status-gray'
+  ];
+
+  statusOpen = false;
+
+  selectStatus(status: string, event?: Event) {
+    event?.stopPropagation(); // 🔥 CỰC QUAN TRỌNG
+
+    this.form.patchValue({ status });
+    this.closeStatusDropdown();
+  }
+
+  closeStatusDropdown() {
+    this.statusOpen = false;
+  }
+
+
+  @HostListener('document:click')
+    onDocumentClick() {
+      this.statusOpen = false;
+      // this.isOpen = false; 
+    }
 
   form!: FormGroup;
 
   availableLabels = ['ENZYCO', 'HAPAKU'];
-  availableProducts = ['Rửa Bát', 'Ngâm Rau', 'Nước Lau Sàn', 'Túi Than'];
+  availableProducts: string[] = [];
   availableStatuses = [
     'Chưa liên hệ',
     'Đã liên hệ',
@@ -247,20 +89,29 @@ export class AddKocComponent {
     'Đã lên video'
   ];
 
+  async ngOnInit() {
+    this.kocForm = this.fb.group({
+      products: [[]]
+    });
+
+    await this.loadProducts();
+  }
+
   @Output() saved = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
 
   constructor(
     private fb: FormBuilder,
     private kocService: KocService,
-    private tiktokApi: TikTokApiService
+    private tiktokApi: TikTokApiService,
+    // private productService: ProductService
   ) {
     this.buildForm();
   }
 
   private buildForm() {
     this.form = this.fb.group({
-      id: [''],
+      
       channelName: [''],
       linkChannel: [''],
       dateFound: [''],
@@ -305,8 +156,11 @@ export class AddKocComponent {
     this.isEditMode = !!koc;
 
     if (koc) {
-      this.form.patchValue(koc);
+      const { id, ...formData } = koc;
+      this.editingId = id!;
+      this.form.patchValue(formData);
     } else {
+      this.editingId = null;
       this.form.reset({
         staff: 'Lê Châu',
         manager: 'Trưởng Team',
@@ -319,6 +173,7 @@ export class AddKocComponent {
   closePopup() {
     this.isPopupOpen = false;
     this.isEditMode = false;
+    this.editingId = null;
     this.form.reset();
     this.closed.emit();
   }
@@ -343,6 +198,7 @@ export class AddKocComponent {
     this.form.patchValue({ [controlName]: arr });
   }
 
+  
   async saveKoc() {
     if (!this.form.value.channelName) {
       alert('Vui lòng nhập tên kênh');
@@ -357,8 +213,11 @@ export class AddKocComponent {
         linkChannel: `https://www.tiktok.com/@${this.form.value.channelName}`
       };
 
-      if (this.isEditMode && payload.id) {
-        await this.kocService.updateKoc(payload.id, payload);
+      // 🔒 TUYỆT ĐỐI KHÔNG CHO ID LỌT VÀO FIRESTORE
+      delete (payload as any).id;
+
+      if (this.isEditMode && this.editingId) {
+        await this.kocService.updateKoc(this.editingId, payload);
       } else {
         await this.kocService.addKoc({
           ...payload,
@@ -374,7 +233,11 @@ export class AddKocComponent {
     } finally {
       this.isSubmitting = false;
     }
+    console.log('EDIT MODE:', this.isEditMode);
+    console.log('EDIT ID:', this.editingId);
+
   }
+
 
   crawlTikTok() {
     const videoLink = this.form.value.videoLink;
@@ -409,4 +272,159 @@ export class AddKocComponent {
       }
     });
   }
+
+  private getRandomColor(): string {
+    const index = Math.floor(Math.random() * this.COLOR_CLASSES.length);
+    return this.COLOR_CLASSES[index];
+  }
+
+  getColor(type: 'products' | 'statuses', value: string): string {
+    const map = this.colorMap[type];
+
+    if (!map.has(value)) {
+      map.set(value, this.getRandomColor());
+    }
+
+    return map.get(value)!;
+  }
+
+  addProductToForm(name: string) {
+    const products = this.form.value.products || [];
+
+    if (!products.includes(name)) {
+      this.form.patchValue({
+        products: [...products, name]
+      });
+    }
+
+    this.productInput = '';
+    this.showProductDropdown = false;
+  }
+
+  isProductExist(name: string): boolean {
+    return this.products.some(
+      p => p.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  // 🔹 LOAD PRODUCT
+  async loadProducts() {
+    const ref = collection(this.firestore, 'products');
+    const q = query(ref, orderBy('createdAt', 'asc'));
+    const snap = await getDocs(q);
+
+    this.products = snap.docs.map(d => ({
+      id: d.id,
+      name: d.data()['name']
+    }));
+
+    this.filteredProducts = this.products;
+  }
+
+  // 🔹 FILTER
+  filterProducts() {
+    const key = this.productInput.toLowerCase();
+    this.filteredProducts = this.products.filter(p =>
+      p.name.toLowerCase().includes(key)
+    );
+  }
+
+  // 🔹 SELECT
+  async selectProduct(product: Product, event?: Event) {
+    event?.stopPropagation(); // 🔥 CỰC KỲ QUAN TRỌNG
+
+    const current = this.kocForm.value.products as Product[];
+
+    if (!current.find(p => p.id === product.id)) {
+      this.kocForm.patchValue({
+        products: [...current, product]
+      });
+    }
+
+    this.closeDropdown();
+  }
+
+
+  // 🔹 ENTER → ADD OR SELECT
+  async onEnter() {
+    if (!this.productInput.trim()) return;
+
+    const exist = this.products.find(
+      p => p.name.toLowerCase() === this.productInput.toLowerCase()
+    );
+
+    if (exist) {
+      this.selectProduct(exist);
+      return;
+    }
+
+    const ref = collection(this.firestore, 'products');
+    const docRef = await addDoc(ref, {
+      name: this.productInput.trim(),
+      createdAt: new Date()
+    });
+
+    const newProduct = {
+      id: docRef.id,
+      name: this.productInput.trim()
+    };
+
+    this.products.push(newProduct);
+    this.selectProduct(newProduct);
+  }
+
+
+  removeProduct(id: string) {
+    const list = this.kocForm.value.products.filter((p: Product) => p.id !== id);
+    this.kocForm.patchValue({ products: list });
+  }
+
+  resetInput() {
+    this.productInput = '';
+    this.filteredProducts = this.products;
+    this.isOpen = false;
+  }
+
+  openDropdown() {
+    this.isOpen = true;
+  }
+
+  closeDropdown() {
+    this.isOpen = false;
+    this.productInput = '';
+    this.filteredProducts = this.products;
+  }
+
+  openStatusDropdown(event?: Event) {
+    event?.stopPropagation();
+    this.statusOpen = true;
+  }
+  
+  openLabelDropdown(event?: Event) {
+    event?.stopPropagation();
+    this.labelOpen = true;
+  }
+    labelOpen = false;
+    selectLabel(label: string, event?: Event) {
+    event?.stopPropagation();
+
+    const current = this.form.value.labels || [];
+
+    if (!current.includes(label)) {
+      this.form.patchValue({
+        labels: [...current, label]
+      });
+    }
+
+    this.closeLabelDropdown();
+  }
+  removeLabel(index: number) {
+    const arr = [...this.form.value.labels];
+    arr.splice(index, 1);
+    this.form.patchValue({ labels: arr });
+  }
+  closeLabelDropdown() {
+    this.labelOpen = false;
+  }
+
 }

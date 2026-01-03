@@ -16,7 +16,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class KocListComponent {
 
-  @ViewChild(AddKocComponent) addKocPopup!: AddKocComponent;
+  // @ViewChild(AddKocComponent) addKocPopup!: AddKocComponent;
+
+  @ViewChild('addKoc') addKoc!: AddKocComponent;
+
 
   /** ===== STREAM ===== */
   private search$ = new BehaviorSubject<string>('');
@@ -127,11 +130,8 @@ export class KocListComponent {
     });
   }
 
-  /** =========================
-   *  CRUD
-   *  ========================= */
   edit(item: KocData) {
-    this.addKocPopup.openPopup(item);
+    this.addKoc.openPopup(item);
   }
 
   remove(item: KocData) {

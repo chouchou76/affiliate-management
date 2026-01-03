@@ -2,7 +2,7 @@
 
 <div class="popup-container" *ngIf="isPopupOpen">
   <div class="popup-header">
-    <h2>{{ form.value.channelName || 'Thêm KOC' }}</h2>
+    <h2>{{ form.value.channelName || 'Bảng ghi không có tiêu đề' }}</h2>
     <button class="close-btn" (click)="closePopup()">×</button>
   </div>
 
@@ -52,16 +52,12 @@
 
       <div class="field-row">
         <label>Ghi Chú</label>
-        <textarea rows="1" formControlName="note"></textarea>
+        <input type="text" formControlName="note">
       </div>
 
-      <div class="field-row">
-        <label>Liên Hệ Lại</label>
-        <input type="text" formControlName="recontact">
-      </div>
-
+      
       <!-- LABELS -->
-      <div class="field-row">
+      <!-- <div class="field-row">
         <label>Nhãn hàng</label>
         <span class="tag green" *ngFor="let l of form.value.labels; let i=index">
           {{ l }} <span (click)="removeTag('labels', i)">×</span>
@@ -70,28 +66,168 @@
           <option value="">Chọn nhãn</option>
           <option *ngFor="let l of availableLabels" [value]="l">{{ l }}</option>
         </select>
-      </div>
+      </div> -->
+      <!-- LABELS -->
+<div class="field-row">
+  <label>Nhãn hàng</label>
+
+  <div class="select-wrapper">
+    <div class="select-box" (click)="openLabelDropdown()">
+      <span
+        class="tag"
+        *ngFor="let l of form.value.labels; let i = index"
+        [ngClass]="getColor('products', l)"
+      >
+        {{ l }}
+        <span class="remove" (click)="removeLabel(i); $event.stopPropagation()">×</span>
+      </span>
+
+      <span class="placeholder" *ngIf="!form.value.labels || form.value.labels.length === 0">
+        Vui lòng lựa chọn
+      </span>
+    </div>
+
+    <div class="dropdown" *ngIf="labelOpen">
+      <span
+        class="tag"
+        *ngFor="let l of availableLabels"
+        [ngClass]="getColor('products', l)"
+        (click)="selectLabel(l)"
+      >
+        {{ l }}
+      </span>
+    </div>
+  </div>
+</div>
+
 
       <!-- PRODUCTS -->
+      <!-- <div class="field-row">
+        <label>Sản phẩm</label>
+
+        <div class="product-box">
+
+          <span
+            class="product-tag"
+            *ngFor="let p of form.value.products; let i = index"
+            [ngClass]="getColor('products', p)"
+          >
+            {{ p }}
+            <span class="remove" (click)="removeTag('products', i)">×</span>
+          </span>
+
+          <input
+            type="text"
+            placeholder="Chọn hoặc nhập sản phẩm"
+            [(ngModel)]="productInput"
+            [ngModelOptions]="{ standalone: true }"
+            (input)="filterProducts()"
+            (focus)="isOpen = true"
+            (click)="isOpen = true"
+            (keydown.enter)="onEnter()"
+          />
+        </div>
+
+        <div class="product-dropdown" *ngIf="isOpen">
+       
+          <div
+            class="dropdown-item"
+            *ngFor="let p of filteredProducts"
+            (click)="selectProduct(p, $event)"
+            (click)="addProductToForm(p.name)"
+          >
+            {{ p.name }}
+          </div>
+
+          <div
+            class="dropdown-add"
+            *ngIf="filteredProducts.length === 0 && productInput"
+            (click)="onEnter()"
+          >
+             Thêm "{{ productInput }}"
+          </div>
+        </div>
+      </div> -->
       <div class="field-row">
         <label>Sản phẩm</label>
-        <span class="tag pink" *ngFor="let p of form.value.products; let i=index">
-          {{ p }} <span (click)="removeTag('products', i)">×</span>
-        </span>
-        <select (change)="addSelectTag('products', $event)">
-          <option value="">Chọn sản phẩm</option>
-          <option *ngFor="let p of availableProducts" [value]="p">{{ p }}</option>
-        </select>
-      </div>
 
+        <div class="product-box" (click)="openDropdown()">
+          <span
+            class="product-tag"
+            *ngFor="let p of form.value.products; let i = index"
+            [ngClass]="getColor('products', p)"
+          >
+            {{ p }}
+            <span class="remove" (click)="removeTag('products', i); $event.stopPropagation()">×</span>
+          </span>
+        </div>
+
+        <div class="product-dropdown" *ngIf="isOpen">
+          <input
+            type="text"
+            placeholder="Chọn hoặc nhập sản phẩm"
+            [(ngModel)]="productInput"
+            [ngModelOptions]="{ standalone: true }"
+            (input)="filterProducts()"
+            (keydown.enter)="onEnter(); $event.preventDefault()"
+            #productInputEl
+            [class.has-value]="productInput"
+          />
+
+          <div
+            class="dropdown-item"
+            *ngFor="let p of filteredProducts"
+            (click)="selectProduct(p, $event)"
+            (click)="addProductToForm(p.name)"
+          >
+            {{ p.name }}
+          </div>
+
+          <div
+            class="dropdown-add"
+            *ngIf="filteredProducts.length === 0 && productInput"
+            (click)="onEnter()"
+          >
+            <span class="product-tag preview-tag">
+              {{ productInput }}
+              <span class="remove">×</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      
       <!-- STATUS -->
       <div class="field-row">
-        <label>Trạng thái</label>
-        <select formControlName="status">
-          <option value="">Chọn trạng thái</option>
-          <option *ngFor="let s of availableStatuses" [value]="s">{{ s }}</option>
-        </select>
-      </div>
+  <label>Trạng thái</label>
+
+  <div class="select-wrapper">
+    <div class="select-box" (click)="openStatusDropdown()">
+      <span
+        class="tag"
+        *ngIf="form.value.status"
+        [ngClass]="getColor('statuses', form.value.status)"
+      >
+        {{ form.value.status }}
+      </span>
+
+      <span class="placeholder" *ngIf="!form.value.status">
+        Chọn trạng thái
+      </span>
+    </div>
+
+    <div class="dropdown" *ngIf="statusOpen">
+      <span
+        class="tag"
+        *ngFor="let s of availableStatuses"
+        [ngClass]="getColor('statuses', s)"
+        (click)="selectStatus(s)"
+      >
+        {{ s }}
+      </span>
+    </div>
+  </div>
+</div>
+     
 
       <!-- TIMELINE -->
       <div class="field-row">
