@@ -25,11 +25,7 @@
         <input type="date" formControlName="dateFound">
       </div>
 
-      <div class="field-row">
-        <label>Trùng</label>
-        <input type="checkbox" formControlName="isDuplicate">
-      </div>
-
+      
       <div class="field-row">
         <label>Nhân Viên</label>
         <input type="text" formControlName="staff" readonly>
@@ -55,99 +51,39 @@
         <input type="text" formControlName="note">
       </div>
 
-      
       <!-- LABELS -->
-      <!-- <div class="field-row">
+      <div class="field-row">
         <label>Nhãn hàng</label>
-        <span class="tag green" *ngFor="let l of form.value.labels; let i=index">
-          {{ l }} <span (click)="removeTag('labels', i)">×</span>
-        </span>
-        <select (change)="addSelectTag('labels', $event)">
-          <option value="">Chọn nhãn</option>
-          <option *ngFor="let l of availableLabels" [value]="l">{{ l }}</option>
-        </select>
-      </div> -->
-      <!-- LABELS -->
-<div class="field-row">
-  <label>Nhãn hàng</label>
 
-  <div class="select-wrapper">
-    <div class="select-box" (click)="openLabelDropdown()">
-      <span
-        class="tag"
-        *ngFor="let l of form.value.labels; let i = index"
-        [ngClass]="getColor('products', l)"
-      >
-        {{ l }}
-        <span class="remove" (click)="removeLabel(i); $event.stopPropagation()">×</span>
-      </span>
+        <div class="select-wrapper">
+          <div class="select-box" (click)="openLabelDropdown()">
+            <span
+              class="tag"
+              *ngFor="let l of form.value.labels; let i = index"
+              [ngClass]="getColor('products', l)"
+            >
+              {{ l }}
+              <span class="remove" (click)="removeLabel(i); $event.stopPropagation()">×</span>
+            </span>
 
-      <span class="placeholder" *ngIf="!form.value.labels || form.value.labels.length === 0">
-        Vui lòng lựa chọn
-      </span>
-    </div>
-
-    <div class="dropdown" *ngIf="labelOpen">
-      <span
-        class="tag"
-        *ngFor="let l of availableLabels"
-        [ngClass]="getColor('products', l)"
-        (click)="selectLabel(l)"
-      >
-        {{ l }}
-      </span>
-    </div>
-  </div>
-</div>
-
-
-      <!-- PRODUCTS -->
-      <!-- <div class="field-row">
-        <label>Sản phẩm</label>
-
-        <div class="product-box">
-
-          <span
-            class="product-tag"
-            *ngFor="let p of form.value.products; let i = index"
-            [ngClass]="getColor('products', p)"
-          >
-            {{ p }}
-            <span class="remove" (click)="removeTag('products', i)">×</span>
-          </span>
-
-          <input
-            type="text"
-            placeholder="Chọn hoặc nhập sản phẩm"
-            [(ngModel)]="productInput"
-            [ngModelOptions]="{ standalone: true }"
-            (input)="filterProducts()"
-            (focus)="isOpen = true"
-            (click)="isOpen = true"
-            (keydown.enter)="onEnter()"
-          />
-        </div>
-
-        <div class="product-dropdown" *ngIf="isOpen">
-       
-          <div
-            class="dropdown-item"
-            *ngFor="let p of filteredProducts"
-            (click)="selectProduct(p, $event)"
-            (click)="addProductToForm(p.name)"
-          >
-            {{ p.name }}
+            <span class="placeholder" *ngIf="!form.value.labels || form.value.labels.length === 0">
+              Vui lòng lựa chọn
+            </span>
           </div>
 
-          <div
-            class="dropdown-add"
-            *ngIf="filteredProducts.length === 0 && productInput"
-            (click)="onEnter()"
-          >
-             Thêm "{{ productInput }}"
+          <div class="dropdown" *ngIf="labelOpen">
+            <span
+              class="tag"
+              *ngFor="let l of availableLabels"
+              [ngClass]="getColor('products', l)"
+              (click)="selectLabel(l)"
+            >
+              {{ l }}
+            </span>
           </div>
         </div>
-      </div> -->
+      </div>
+
       <div class="field-row">
         <label>Sản phẩm</label>
 
@@ -300,7 +236,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit">💾 Lưu</button>
+        <button type="submit">Lưu</button>
         <button type="button" (click)="closePopup()">Hủy</button>
       </div>
 

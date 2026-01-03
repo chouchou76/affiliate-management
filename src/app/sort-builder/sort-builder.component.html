@@ -1,0 +1,44 @@
+<div class="sort-panel" *ngIf="sort">
+
+  <!-- FIELD -->
+  <select
+    [ngModel]="sort.field"
+    (ngModelChange)="onFieldChange($event)"
+  >
+    <option
+      *ngFor="let f of sortableFields"
+      [value]="f.field"
+    >
+      {{ f.label }}
+    </option>
+  </select>
+
+  <!-- DIRECTION -->
+  <select
+    [ngModel]="sort.direction"
+    (ngModelChange)="onDirectionChange($event)"
+  >
+    <option value="asc">
+      {{
+        sort.type === 'text'
+          ? 'A → Z'
+          : sort.type === 'date'
+            ? 'Cũ → Mới'
+            : '0 → 9'
+      }}
+    </option>
+
+    <option value="desc">
+      {{
+        sort.type === 'text'
+          ? 'Z → A'
+          : sort.type === 'date'
+            ? 'Mới → Cũ'
+            : '9 → 0'
+      }}
+    </option>
+  </select>
+
+  <button type="button" (click)="clear()">✖ Clear</button>
+
+</div>

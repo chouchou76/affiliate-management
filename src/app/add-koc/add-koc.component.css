@@ -46,7 +46,7 @@
 /* LABEL + INPUT INLINE */
 .field-row {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 100px 1fr;
   align-items: flex-start;
   gap: 16px;
 }
@@ -66,6 +66,12 @@
   border-radius: 6px;
   font-size: 14px;
   background: #fff;
+}
+
+.field-row textarea {
+  height: auto;
+  min-height: 80px;
+  padding: 10px 12px;
 }
 
 .field-row input:focus,
@@ -159,7 +165,7 @@
   cursor: pointer;
 }
 
-.btn-save { background: #28a745; }
+.btn-save { background: #a3b339; }
 .btn-cancel { background: #6c757d; }
 
 .field-row textarea {
@@ -549,4 +555,82 @@ input {
 .btn.primary {
   background: #1677ff;
   color: white;
+}
+
+.form-actions button {
+  height: 44px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.form-actions button[type="submit"] {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.form-actions button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(34,197,94,.35);
+}
+
+.form-actions button[type="button"] {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.form-actions button[type="button"]:hover {
+  background: #d1d5db;
+}
+
+.select-box,
+.product-box {
+  transition: all 0.2s ease;
+}
+
+.select-box:hover,
+.product-box:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.popup-container {
+  border-left: 1px solid #e5e7eb;
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.popup-header {
+  background: #f9fafb;
+}
+
+.popup-header h2 {
+  color: #111827;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+.open-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #1677ff;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.open-btn:hover {
+  background: #0958d9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22,119,255,0.35);
 }

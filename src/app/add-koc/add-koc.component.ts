@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -12,7 +12,7 @@ import {
 import { KocService } from '../services/koc.service';
 import { TikTokApiService } from '../services/tiktok-api.service';
 import { KocData } from '../models/koc.model';
-import { HostListener } from '@angular/core';
+
 
 interface Product {
   id: string;
@@ -33,6 +33,8 @@ export class AddKocComponent {
   isEditMode = false;
   isCrawling = false;
   isOpen = false;
+  labelOpen = false;
+  statusOpen = false;
   kocForm!: FormGroup;
   private editingId: string | null = null;
 
@@ -55,7 +57,6 @@ export class AddKocComponent {
     'status-gray'
   ];
 
-  statusOpen = false;
 
   selectStatus(status: string, event?: Event) {
     event?.stopPropagation(); // 🔥 CỰC QUAN TRỌNG
@@ -69,11 +70,18 @@ export class AddKocComponent {
   }
 
 
-  @HostListener('document:click')
-    onDocumentClick() {
-      this.statusOpen = false;
-      // this.isOpen = false; 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    if (!this.eRef.nativeElement.contains(event.target as Node)) {
+      this.closeAllDropdowns();
     }
+  }
+
+  private closeAllDropdowns() {
+    this.isOpen = false;
+    this.labelOpen = false;
+    this.statusOpen = false;
+  }
 
   form!: FormGroup;
 
@@ -104,7 +112,7 @@ export class AddKocComponent {
     private fb: FormBuilder,
     private kocService: KocService,
     private tiktokApi: TikTokApiService,
-    // private productService: ProductService
+    private eRef: ElementRef
   ) {
     this.buildForm();
   }
@@ -404,7 +412,7 @@ export class AddKocComponent {
     event?.stopPropagation();
     this.labelOpen = true;
   }
-    labelOpen = false;
+    
     selectLabel(label: string, event?: Event) {
     event?.stopPropagation();
 

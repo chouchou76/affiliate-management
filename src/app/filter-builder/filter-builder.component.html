@@ -1,0 +1,30 @@
+<div class="filter-row" *ngFor="let rule of filters; let i = index">
+
+  <select [(ngModel)]="rule.field"
+          (ngModelChange)="updateRule(i, rule)">
+    <option *ngFor="let f of fields" [value]="f.field">
+      {{ f.label }}
+    </option>
+  </select>
+
+  <select [(ngModel)]="rule.operator"
+          (ngModelChange)="updateRule(i, rule)">
+    <option *ngFor="let op of operators[getFieldType(rule.field)]"
+            [value]="op.value">
+      {{ op.label }}
+    </option>
+  </select>
+
+  <input *ngIf="getFieldType(rule.field) === 'text'"
+         [(ngModel)]="rule.value"
+         (ngModelChange)="updateRule(i, rule)" />
+
+  <input *ngIf="getFieldType(rule.field) === 'date'"
+         type="date"
+         [(ngModel)]="rule.value"
+         (ngModelChange)="updateRule(i, rule)" />
+
+  <button (click)="removeRule(i)">✖</button>
+</div>
+
+<button (click)="addRule()">➕ Add filter</button>

@@ -114,3 +114,50 @@ tr.success {
 tr.error {
   background: #f8d7da;
 }
+
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* cho responsive */
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative; /* cần cho dropdown */
+}
+
+.dropdown-wrapper {
+  position: relative; /* anchor cho dropdown */
+  display: inline-block;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;           /* ngay dưới button */
+  left: 0;
+  min-width: 300px;    /* tùy chỉnh theo nội dung builder */
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+  z-index: 100;        /* trên table */
+  margin-top: 6px;
+  padding: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Optional: arrow chỉ lên button */
+.dropdown-content::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-right: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+}
