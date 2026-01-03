@@ -1,65 +1,60 @@
+<!-- sort-builder.component.html (ĐÃ SỬA HOÀN CHỈNH) -->
 <div class="sort-panel">
   <!-- HEADER -->
   <div class="header">
     <h3>Sắp xếp theo trường</h3>
-    <span class="help-icon">?</span>
+    <span class="help-icon" title="Sắp xếp dữ liệu theo nhiều tiêu chí">?</span>
   </div>
 
-  <!-- CURRENT SORT RULE (nếu có) -->
-  <div class="current-rule" *ngIf="sort; else noSort">
-    <div class="rule-tag">
-      <span class="field-label">
-        {{ getFieldLabel(sort.field) }}
-      </span>
+  <!-- AUTO SORT TOGGLE -->
+  <div class="auto-sort">
+    <label>Tự động sắp xếp</label>
+    <input type="checkbox" [(ngModel)]="autoSort" (change)="onAutoSortChange()" />
+  </div>
 
-      <div class="direction-buttons">
-        <button
-          class="dir-btn"
-          [class.active]="sort.direction === 'asc'"
-          (click)="onDirectionChange('asc')"
-        >
-          {{ getDirectionLabel('asc') }}
-        </button>
-        <button
-          class="dir-btn"
-          [class.active]="sort.direction === 'desc'"
-          (click)="onDirectionChange('desc')"
-        >
-          {{ getDirectionLabel('desc') }}
+  <!-- CURRENT RULES -->
+  <div class="rules-list">
+    <div class="rule-item" *ngFor="let rule of sortRules; let i = index">
+      <div class="rule-tag">
+        <span class="field-label">
+          {{ getFieldLabel(rule.field) }}
+        </span>
+
+        <div class="direction-buttons">
+          <button
+            class="dir-btn"
+            [class.active]="rule.direction === 'asc'"
+            (click)="changeDirection(i, 'asc')"
+          >
+            {{ getDirectionLabel(rule.type, 'asc') }}
+          </button>
+          <button
+            class="dir-btn"
+            [class.active]="rule.direction === 'desc'"
+            (click)="changeDirection(i, 'desc')"
+          >
+            {{ getDirectionLabel(rule.type, 'desc') }}
+          </button>
+        </div>
+
+        <button class="remove-rule" (click)="removeRule(i)" title="Xóa quy tắc">
+          ×
         </button>
       </div>
+    </div>
 
-      <button class="remove-rule" (click)="clear()" title="Xóa sắp xếp">
-        ×
-      </button>
+    <div class="no-rules" *ngIf="sortRules.length === 0">
+      Chưa có quy tắc sắp xếp
     </div>
   </div>
 
-  <!-- NO SORT YET -->
-  <ng-template #noSort>
-    <div class="no-sort-placeholder">
-      <p>Chưa có quy tắc sắp xếp</p>
-    </div>
-  </ng-template>
-
-  <!-- ADD / CHANGE FIELD -->
-  <div class="add-field">
-    <select
-      [ngModel]="sort?.field || ''"
-      (ngModelChange)="onFieldChange($event)"
-      placeholder="Chọn trường"
-    >
-      <option value="" disabled [selected]="!sort">
-        Chọn trường
-      </option>
-      <option
-        *ngFor="let f of sortableFields"
-        [value]="f.field"
-      >
+  <!-- ADD NEW RULE -->
+  <div class="add-rule">
+    <select (change)="addRule($event)">
+      <option value="" disabled selected>Chọn trường</option>
+      <option *ngFor="let f of availableFields" [value]="f.field">
         {{ f.label }}
       </option>
     </select>
   </div>
-
-
 </div>

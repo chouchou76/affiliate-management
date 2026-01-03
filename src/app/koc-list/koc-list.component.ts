@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, BehaviorSubject, combineLatest, map, tap } from 'rxjs';
 
@@ -6,11 +6,11 @@ import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
 import { AddKocComponent } from '../add-koc/add-koc.component';
 import { FormsModule } from '@angular/forms';
-import { FieldFilter, SortConfig } from '../models/filter.model';
+import { FieldFilter } from '../models/filter.model';
 import { FilterBuilderComponent } from '../filter-builder/filter-builder.component';
 import { FilterService } from '../services/filter.service';
 import { SortService } from '../services/sort.service';
-import { SortBuilderComponent } from '../sort-builder/sort-builder.component';
+import { SortBuilderComponent, SortRule } from '../sort-builder/sort-builder.component';
 
 
 @Component({
@@ -30,72 +30,37 @@ export class KocListComponent {
   filters: FieldFilter[] = [];
   showSort = false;
   isSortOpen = false;
-  sort: SortConfig | null = null;
+ 
+  currentSorts: SortRule[] = [];
+
 
   /** ===== STREAM ===== */
   private search$ = new BehaviorSubject<string>('');
   private filters$ = new BehaviorSubject<FieldFilter[]>([]);
-  private sort$ = new BehaviorSubject<SortConfig | null>(null);
+  private sort$ = new BehaviorSubject<SortRule[] | null>(null);
 
   kocList$!: Observable<KocData[]>;
 
   /** UI state */
   selectAll = false;
   searchText = '';
+  
 
   constructor(
     private kocService: KocService,
     private filterService: FilterService,
-    private sortService: SortService
+    // private sortService: SortService
   ) {
     this.initStream();
   }
 
-  /** =========================
-   *  INIT STREAM (REALTIME + SEARCH)
-   *  ========================= */
-  // private initStream() {
-  //   this.kocList$ = combineLatest([
-  //     this.kocService.getKocs(),
-  //     this.search$
-  //   ]).pipe(
-  //     map(([list, search]) => {
-  //       const keyword = search.toLowerCase().trim();
-
-  //       let normalized = list.map(item => ({
-  //         ...item,
-  //         labels: item.labels ?? [],
-  //         products: item.products ?? [],
-  //         linkChannel:
-  //           item.linkChannel || `https://www.tiktok.com/@${item.channelName}`,
-  //         isDuplicate: false,
-  //         selected: item.selected ?? false
-  //       }));
-
-  //       normalized = this.markDuplicates(normalized);
-
-  //       // 🔍 SEARCH
-  //       if (keyword) {
-  //         normalized = normalized.filter(item =>
-  //           item.channelName.toLowerCase().includes(keyword) ||
-  //           item.staff?.toLowerCase().includes(keyword) ||
-  //           item.manager?.toLowerCase().includes(keyword)
-  //         );
-  //       }
-
-  //       return normalized;
-  //     }),
-  //     tap(list => {
-  //       this.selectAll = list.length > 0 && list.every(i => i.selected);
-  //     })
-  //   );
-  // }
+ 
   private initStream() {
   this.kocList$ = combineLatest([
     this.kocService.getKocs(),
     this.search$,
     this.filterService.filters$,
-    this.sortService.sort$
+    this.sort$
   ]).pipe(
     map(([list, search, filters, sort]) => {
       let result = list.map(item => ({
@@ -127,16 +92,35 @@ export class KocListComponent {
       });
 
       // ↕️ SORT
-      if (sort) {
-        result = [...result].sort((a, b) => {
-          const v1 = a[sort.field];
-          const v2 = b[sort.field];
-          if (v1 == null) return 1;
-          if (v2 == null) return -1;
-          return sort.direction === 'asc'
-            ? v1 > v2 ? 1 : -1
-            : v1 < v2 ? 1 : -1;
-        });
+      if (sort && sort.length > 0) {  // ← sort giờ là SortRule[] | null
+  result = [...result].sort((a, b) => {
+    for (const rule of sort) {  // ← duyệt mảng rules
+      const v1 = (a as any)[rule.field];
+      const v2 = (b as any)[rule.field];
+
+      if (v1 == null && v2 == null) continue;
+      if (v1 == null) return rule.direction === 'asc' ? 1 : -1;
+      if (v2 == null) return rule.direction === 'asc' ? -1 : 1;
+
+      let cmp = 0;
+      switch (rule.type) {
+        case 'text':
+          cmp = String(v1).localeCompare(String(v2), 'vi', { sensitivity: 'base' });
+          break;
+        case 'number':
+          cmp = Number(v1) - Number(v2);
+          break;
+        case 'date':
+          cmp = new Date(v1).getTime() - new Date(v2).getTime();
+          break;
+      }
+
+      if (cmp !== 0) {
+        return rule.direction === 'asc' ? cmp : -cmp;
+      }
+    }
+    return 0;
+  });
       }
 
       return result;
@@ -340,37 +324,32 @@ export class KocListComponent {
     this.filters$.next(filters);
   }
 
-  private applySort(list: any[], sort: SortConfig) {
-    const dir = sort.direction === 'asc' ? 1 : -1;
+  // private applySort(list: any[], sort: SortConfig) {
+  //   const dir = sort.direction === 'asc' ? 1 : -1;
 
-    return [...list].sort((a, b) => {
-      const v1 = a[sort.field];
-      const v2 = b[sort.field];
+  //   return [...list].sort((a, b) => {
+  //     const v1 = a[sort.field];
+  //     const v2 = b[sort.field];
 
-      if (v1 == null) return 1;
-      if (v2 == null) return -1;
+  //     if (v1 == null) return 1;
+  //     if (v2 == null) return -1;
 
-      switch (sort.type) {
-        case 'text':
-          return v1.toString()
-            .localeCompare(v2.toString(), 'vi', { sensitivity: 'base' }) * dir;
+  //     switch (sort.type) {
+  //       case 'text':
+  //         return v1.toString()
+  //           .localeCompare(v2.toString(), 'vi', { sensitivity: 'base' }) * dir;
 
-        case 'number':
-          return (Number(v1) - Number(v2)) * dir;
+  //       case 'number':
+  //         return (Number(v1) - Number(v2)) * dir;
 
-        case 'date':
-          return (new Date(v1).getTime() - new Date(v2).getTime()) * dir;
+  //       case 'date':
+  //         return (new Date(v1).getTime() - new Date(v2).getTime()) * dir;
 
-        default:
-          return 0;
-      }
-    });
-  }
-
-  onSortChange(sort: SortConfig | null) {
-    this.sort = sort;
-    this.sort$.next(sort);
-  }
+  //       default:
+  //         return 0;
+  //     }
+  //   });
+  // }
 
   toggleFilter() {
     this.showFilter = !this.showFilter;
@@ -385,4 +364,87 @@ export class KocListComponent {
       this.showFilter = false; // đóng filter nếu mở sort
     }
   }
+
+  getTagColor(text: string): string {
+    const colors = [
+      '#1abc9c', '#3498db', '#9b59b6',
+      '#e67e22', '#e74c3c', '#2ecc71',
+      '#f39c12', '#16a085'
+    ];
+
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      hash = text.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  // Resize logic
+  private resizingColumn: HTMLElement | null = null;
+  private startX = 0;
+  private startWidth = 0;
+
+  startResize(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const handle = event.target as HTMLElement;
+    const th = handle.closest('th');
+    if (!th) return;
+
+    this.resizingColumn = th as HTMLElement;
+    this.startX = event.clientX;
+    this.startWidth = this.resizingColumn.offsetWidth;
+
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.stopResize);
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove = (event: MouseEvent) => {
+    if (!this.resizingColumn) return;
+
+    const delta = event.clientX - this.startX;
+    const newWidth = Math.max(50, this.startWidth + delta); // Min width 50px
+
+    this.resizingColumn.style.width = `${newWidth}px`;
+    this.resizingColumn.style.minWidth = `${newWidth}px`;
+
+    // Cập nhật left cho sticky columns nếu cần
+    this.updateStickyPositions();
+  }
+
+  @HostListener('document:mouseup')
+  stopResize = () => {
+    this.resizingColumn = null;
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.stopResize);
+  }
+
+  private updateStickyPositions() {
+    const ths = Array.from(document.querySelectorAll('.koc-table th'));
+    
+    let left = 0;
+    ths.forEach((th: Element) => {
+      if (th.classList.contains('sticky-col')) {
+        (th as HTMLElement).style.left = `${left}px`;
+        left += (th as HTMLElement).offsetWidth;
+      }
+    });
+  }
+
+  showFullLink(link: string | undefined) {
+    if (link) {
+      alert(link);
+      // Hoặc mở modal, copy vào clipboard, v.v.
+    }
+    // Nếu link là undefined hoặc rỗng, không làm gì
+  }
+
+  onSortChange(sorts: SortRule[] | null) {
+  // sorts có thể là null (khi clear all rules) hoặc mảng
+  this.currentSorts = sorts ? [...sorts] : [];
+  this.sort$.next(sorts); // ← truyền thẳng, không cần kiểm tra length
+}
+
 }

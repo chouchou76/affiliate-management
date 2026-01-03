@@ -1,85 +1,99 @@
 <div *ngIf="kocList$ | async as list" class="table-wrapper">
 
   <div class="table-toolbar">
-  <app-add-koc #addKoc></app-add-koc>
+    <app-add-koc #addKoc></app-add-koc>
 
-  <button class="btn" (click)="bulkCrawl(list)">
-    ⚡ Bulk Crawl
-  </button>
-
-  <input
-    type="text"
-    placeholder="Search"
-    [(ngModel)]="searchText"
-    (ngModelChange)="onSearchChange($event)"
-  />
-
-  <!-- 🔹 FILTER DROPDOWN -->
-  <div class="dropdown-wrapper">
-    <button class="btn" (click)="toggleFilter()">
-      🎯 Filter
+    <button class="btn" (click)="bulkCrawl(list)">
+      ⚡ Bulk Crawl
     </button>
 
-    <app-filter-builder
-      class="dropdown-content"
-      *ngIf="showFilter"
-      [filters]="filters"
-      (filtersChange)="onFiltersChange($event)"
-    ></app-filter-builder>
+    <input
+      type="text"
+      placeholder="Search"
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChange($event)"
+    />
+
+    <div class="dropdown-wrapper">
+      <button class="btn" (click)="toggleFilter()">
+        🎯 Filter
+      </button>
+
+      <app-filter-builder
+        class="dropdown-content"
+        *ngIf="showFilter"
+        [filters]="filters"
+        (filtersChange)="onFiltersChange($event)"
+      ></app-filter-builder>
+    </div>
+
+    <div class="dropdown-wrapper">
+      <button class="btn" (click)="toggleSort()">
+        ↕️ Sort
+      </button>
+
+      <app-sort-builder
+        class="dropdown-content"
+        *ngIf="isSortOpen"
+        [sorts]="currentSorts"
+        (sortsChange)="onSortChange($event)"
+      ></app-sort-builder>
+    </div>
   </div>
 
-  <!-- 🔹 SORT DROPDOWN -->
-  <div class="dropdown-wrapper">
-    <button class="btn" (click)="toggleSort()">
-      ↕️ Sort
-    </button>
-
-    <app-sort-builder
-      class="dropdown-content"
-      *ngIf="isSortOpen"
-      [sort]="sort"
-      (sortChange)="onSortChange($event)"
-    ></app-sort-builder>
-  </div>
-</div>
-
-  <!-- TABLE -->
   <table class="koc-table">
     <thead>
       <tr>
-        <th>
+        <th class="col-checkbox">
           <input
             type="checkbox"
             [checked]="selectAll"
             (change)="toggleSelectAll(list)"
           />
+          <div (mousedown)="startResize($event)"></div>
         </th>
-        <th>STT</th>
-        <th>Tên Kênh</th>
-        <th>Link Kênh</th>
-        <th>Trùng</th>
-        <th>Nhân Viên</th>
-        <th>Quản Lý</th>
-        <th>Ngày Tìm</th>
-        <th>Cast</th>
-        <th>Hoa Hồng</th>
-        <th>Ghi Chú</th>
-        <th>Nhãn hàng</th>
-        <th>Sản Phẩm</th>
-        <th>Trạng Thái</th>
-        <th>Ngày Gửi Mẫu</th>
-        <th>Ngày Air Dự Kiến</th>
-        <th>Ngày Air Thực Tế</th>
-        <th>Link Video</th>
-        <th>ID Video</th>
-        <th>Data Retrieval Time</th>
-        <th>GMV</th>
-        <th>Views</th>
-        <th>Likes</th>
-        <th>Comments</th>
-        <th>Shares</th>
-        <th>Saves</th>
-        <th>Is Ad</th>
+        <th >
+          STT
+          <div (mousedown)="startResize($event)"></div>
+        </th>
+        <th>
+          Tên Kênh
+          <div (mousedown)="startResize($event)"></div>
+        </th>
+        <th class="resizable">
+          Link Kênh
+          <div class="resize-handle" (mousedown)="startResize($event)"></div>
+        </th>
+        <th class="resizable">
+          Trùng
+          <div class="resize-handle" (mousedown)="startResize($event)"></div>
+        </th>
+        <!-- Các cột khác tương tự, thêm resizable + handle nếu muốn resize -->
+        <th class="resizable">Nhân Viên<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Quản Lý<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Ngày Tìm<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Cast<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Hoa Hồng<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Ghi Chú<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Nhãn hàng<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Sản Phẩm<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Trạng Thái<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Ngày Gửi Mẫu<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Ngày Air Dự Kiến<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Ngày Air Thực Tế<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="col-video resizable">
+          Link Video
+          <div class="resize-handle" (mousedown)="startResize($event)"></div>
+        </th>
+        <th class="resizable">ID Video<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Data Retrieval Time<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">GMV<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Views<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Likes<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Comments<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Shares<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Saves<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
+        <th class="resizable">Is Ad<div class="resize-handle" (mousedown)="startResize($event)"></div></th>
         <th>Action</th>
       </tr>
     </thead>
@@ -90,7 +104,7 @@
         [class.selected]="item.selected"
         (click)="toggleRow(item, list)"
       >
-        <td>
+        <td class="col-checkbox sticky-col">
           <input
             type="checkbox"
             [(ngModel)]="item.selected"
@@ -98,10 +112,10 @@
           />
         </td>
 
-        <td>{{ i + 1 }}</td>
-        <td>{{ item.channelName }}</td>
+        <td class="col-stt sticky">{{ i + 1 }}</td>
+        <td class="col-channel sticky-col">{{ item.channelName }}</td>
         <td>
-          <a [href]="item.linkChannel" target="_blank">
+          <a [href]="item.linkChannel" target="_blank" (click)="$event.stopPropagation()">
             {{ item.linkChannel }}
           </a>
         </td>
@@ -109,22 +123,38 @@
         <td>{{ item.isDuplicate ? 'Trùng' : '' }}</td>
         <td>{{ item.staff }}</td>
         <td>{{ item.manager }}</td>
-        <td>{{ item.dateFound }}</td>
+        <td>{{ item.dateFound | date:'dd-MM-yyyy' }}</td>
         <td>{{ item.cast }}</td>
-        <td>{{ item.commission }}%</td>
+        <td>{{ item.commission }}</td>
         <td>{{ item.note }}</td>
-        <td>{{ item.labels.join(', ') }}</td>
-        <td>{{ item.products.join(', ') }}</td>
+        <td>
+          <button
+            *ngFor="let l of item.labels"
+            class="tag-btn"-col
+            [style.background]="getTagColor(l)">
+            {{ l }}
+          </button>
+        </td>
+        <td>
+          <button
+            *ngFor="let p of item.products"
+            class="tag-btn"
+            [style.background]="getTagColor(p)">
+            {{ p }}
+          </button>
+        </td>
         <td>{{ item.status }}</td>
-        
         <td>{{ item.sampleSendDate | date:'dd-MM-yyyy' }}</td>
         <td>{{ item.expectedAirDate | date:'dd-MM-yyyy' }}</td>
         <td>{{ item.actualAirDate | date:'dd-MM-yyyy' }}</td>
-        <td>{{ item.videoLink }}</td>
+        <td class="col-video" (dblclick)="showFullLink(item.videoLink); $event.stopPropagation()">
+          <a [href]="item.videoLink" target="_blank" (click)="$event.stopPropagation()">
+            {{ item.videoLink }}
+          </a>
+        </td>
         <td>{{ item.videoId }}</td>
-        <td>{{ item.dataRetrievalTime }}</td>
+        <td>{{ item.dataRetrievalTime | date:'dd-MM-yyyy HH:mm:ss' }}</td>
         <td>{{ item.gmv }}</td>
-        
         <td>{{ item.views | number }}</td>
         <td>{{ item.likes | number }}</td>
         <td>{{ item.comments | number }}</td>
@@ -139,4 +169,3 @@
     </tbody>
   </table>
 </div>
-

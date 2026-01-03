@@ -1,153 +1,210 @@
-/* Cấu hình container để tạo diện tích cho cuộn ngang */
-.container {
-  width: 100%;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow-x: auto; /* Cho phép cuộn ngang */
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;  /* Cố định chiều rộng cho bảng */
-}
-
-table th, table td {
-  padding: 12px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-table th {
-  background-color: #f4f4f9;
-}
-
-/* Cố định cột đầu tiên (Tên Kênh) */
-table th:first-child, table td:first-child {
-  position: sticky;
-  left: 0;
-  background-color: #fff;
- 
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Thêm bóng cho cột cố định */
-}
-
-/* Cố định cột thứ hai (Link Kênh) */
-table th:nth-child(2), table td:nth-child(2) {
-  position: sticky;
-  left: 150px; /* Cố định tại vị trí bên cạnh cột đầu tiên */
-  background-color: #fff;
-  z-index: 1; /* Đảm bảo không che khuất cột đầu tiên */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Thêm bóng cho cột cố định */
-}
-
-/* Cho phép bảng cuộn ngang */
-table {
-  display: block;
+/* Container cho phép scroll ngang */
+.table-wrapper {
   width: 100%;
   overflow-x: auto;
+  position: relative;
+}
+
+/* Table configuration */
+.koc-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  position: relative;
+}
+
+.koc-table th,
+.koc-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
   white-space: nowrap;
 }
 
-/* Đảm bảo các cột còn lại có chiều rộng cố định */
-table th, table td {
-  min-width: 150px; /* Đảm bảo các cột có chiều rộng tối thiểu */
+/* === STICKY COLUMNS === */
+
+/* Cột 1: Checkbox */
+.koc-table th:first-child, 
+.koc-table td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #fff;
+  z-index: 3;
+  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
+  text-align: center;
 }
 
-.toolbar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-
-  input {
-    padding: 6px;
-    min-width: 200px;
-  }
+.koc-table thead th:first-child {
+  background-color: #f4f4f9;
+  z-index: 13; /* Higher z-index for header */
 }
 
-.koc-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  th, td {
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  tr:hover {
-    background: #f5f7fa;
-    cursor: pointer;
-  }
-
-  tr.selected {
-    background-color: #e8f0fe;
-  }
+/* Cột 2: STT */
+.koc-table th:nth-child(2), 
+.koc-table td:nth-child(2) {
+  position: sticky;
+  left: 50px; /* = width của cột 1 */
+  background-color: #fff;
+  z-index: 2;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  text-align: center;
 }
 
-.btn {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  background: white;
+.koc-table thead th:nth-child(2) {
+  background-color: #f4f4f9;
+  z-index: 12;
+}
+
+/* Cột 3: Tên Kênh */
+.koc-table th:nth-child(3), 
+.koc-table td:nth-child(3) {
+  position: sticky;
+  left: 110px; /* 50 + 60 */
+  background-color: #fff;
+  z-index: 1;
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Shadow chỉ cho cột cuối */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.koc-table thead th:nth-child(3) {
+  background-color: #f4f4f9;
+  z-index: 11;
+}
+
+/* Hover effects - giữ background cho sticky columns */
+.koc-table tbody tr:hover {
+  background: #f5f7fa;
   cursor: pointer;
-
-  &.primary {
-    background: #1a73e8;
-    color: white;
-    border: none;
-  }
 }
 
-tr.selected {
-  background: #e3f2fd;
+.koc-table tbody tr:hover td:first-child,
+.koc-table tbody tr:hover td:nth-child(2),
+.koc-table tbody tr:hover td:nth-child(3) {
+  background: #f5f7fa;
 }
 
-tr.crawling {
+/* Selected row effects */
+.koc-table tbody tr.selected {
+  background-color: #e8f0fe;
+}
+
+.koc-table tbody tr.selected td:first-child,
+.koc-table tbody tr.selected td:nth-child(2),
+.koc-table tbody tr.selected td:nth-child(3) {
+  background-color: #e8f0fe;
+}
+
+/* Các trạng thái khác */
+.koc-table tbody tr.crawling {
   background: #fff3cd;
 }
 
-tr.success {
+.koc-table tbody tr.crawling td:first-child,
+.koc-table tbody tr.crawling td:nth-child(2),
+.koc-table tbody tr.crawling td:nth-child(3) {
+  background: #fff3cd;
+}
+
+.koc-table tbody tr.success {
   background: #d4edda;
 }
 
-tr.error {
+.koc-table tbody tr.success td:first-child,
+.koc-table tbody tr.success td:nth-child(2),
+.koc-table tbody tr.success td:nth-child(3) {
+  background: #d4edda;
+}
+
+.koc-table tbody tr.error {
   background: #f8d7da;
 }
 
+.koc-table tbody tr.error td:first-child,
+.koc-table tbody tr.error td:nth-child(2),
+.koc-table tbody tr.error td:nth-child(3) {
+  background: #f8d7da;
+}
+
+/* Header style */
+.koc-table th {
+  background-color: #f4f4f9;
+  font-weight: 600;
+}
+
+/* Toolbar styles */
 .table-toolbar {
   display: flex;
   align-items: center;
-  flex-wrap: wrap; /* cho responsive */
+  flex-wrap: wrap;
   gap: 12px;
   padding: 12px;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
-  position: relative; /* cần cho dropdown */
+  position: relative;
 }
 
+/* Button styles */
+.btn {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background: #f5f5f5;
+}
+
+.btn.primary {
+  background: #1a73e8;
+  color: white;
+  border: none;
+}
+
+.btn.primary:hover {
+  background: #1557b0;
+}
+
+/* Search input */
+.table-toolbar input[type="text"] {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+/* Dropdown styles */
 .dropdown-wrapper {
-  position: relative; /* anchor cho dropdown */
+  position: relative;
   display: inline-block;
 }
 
 .dropdown-content {
   position: absolute;
-  top: 100%;           /* ngay dưới button */
+  top: 100%;
   left: 0;
-  min-width: 300px;    /* tùy chỉnh theo nội dung builder */
+  min-width: 300px;
   background: white;
   border: 1px solid #d1d5db;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.15);
-  z-index: 100;        /* trên table */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 100;
   margin-top: 6px;
   padding: 12px;
   max-height: 70vh;
   overflow-y: auto;
 }
 
-/* Optional: arrow chỉ lên button */
 .dropdown-content::before {
   content: '';
   position: absolute;
@@ -160,4 +217,88 @@ tr.error {
   border-right: none;
   border-bottom: none;
   transform: rotate(45deg);
+}
+
+/* Tag buttons */
+.tag-btn {
+  padding: 4px 10px;
+  border-radius: 14px;
+  border: none;
+  font-size: 12px;
+  margin: 2px;
+  color: #fff;
+  cursor: default;
+  white-space: nowrap;
+}
+
+/* Video link column */
+.col-video {
+  width: 220px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.col-video a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Resize functionality */
+.resizable {
+  position: relative;
+  min-width: 100px;
+}
+
+.resize-handle {
+  position: absolute;
+  right: -3px;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1;
+  background: transparent;
+}
+
+.resize-handle:hover,
+.resize-handle.active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Không cho resize 3 cột sticky */
+.koc-table th:first-child .resize-handle,
+.koc-table th:nth-child(2) .resize-handle,
+.koc-table th:nth-child(3) .resize-handle {
+  display: none;
+}
+
+/* Links styling */
+.koc-table a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.koc-table a:hover {
+  text-decoration: underline;
+}
+
+/* Action buttons in table */
+.koc-table td button {
+  padding: 4px 8px;
+  margin: 0 2px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.koc-table td button:hover {
+  opacity: 0.7;
 }

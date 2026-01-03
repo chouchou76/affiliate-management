@@ -37,6 +37,9 @@
   gap: 20px;
 }
 
+table {
+  table-layout: fixed;
+}
 
 /* FIELD */
 .form-field {
@@ -623,7 +626,7 @@ button {
   padding: 10px 16px;
   border-radius: 10px;
   border: none;
-  background: #1677ff;
+  background: #41b339;
   color: white;
   font-weight: 500;
   cursor: pointer;
@@ -633,4 +636,7 @@ button {
   background: #0958d9;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(22,119,255,0.35);
+}
+table {
+  table-layout: fixed;
 }

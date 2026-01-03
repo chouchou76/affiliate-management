@@ -1,90 +1,14 @@
-// import { Component, Input, Output, EventEmitter } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { FormsModule } from '@angular/forms';
-// import { SortConfig } from '../models/filter.model';
-// import { FILTER_FIELDS } from '../models/filter.model';
-// import { KocData } from '../models/koc.model';
-
-// @Component({
-//   selector: 'app-sort-builder',
-//   standalone: true,
-//   imports: [CommonModule, FormsModule],
-//   templateUrl: './sort-builder.component.html',
-//   styleUrls: ['./sort-builder.component.css']
-// })
-// export class SortBuilderComponent {
-
-//   @Input() sort: SortConfig | null = null;
-//   @Output() sortChange = new EventEmitter<SortConfig | null>();
-
-//   fields = FILTER_FIELDS;
-
-//   setField(field: keyof KocData) {
-//     const fieldConfig = this.fields.find(f => f.field === field);
-
-//     if (!fieldConfig || fieldConfig.type === 'boolean') return;
-
-//     this.sort = {
-//       field,
-//       type: fieldConfig.type, // ✅ OK
-//       direction: 'asc'
-//     };
-
-//     this.emit();
-//   }
-
-
-//   toggleDirection() {
-//     if (!this.sort) return;
-//     this.sort.direction = this.sort.direction === 'asc' ? 'desc' : 'asc';
-//     this.emit();
-//   }
-
-//   clear() {
-//     this.sort = null;
-//     this.emit();
-//   }
-
-//   private emit() {
-//     this.sortChange.emit(this.sort);
-//   }
-
-//   sortableFields = this.fields.filter(
-//     f => f.type !== 'boolean'
-//   );
-
-//   onFieldChange(field: keyof KocData) {
-//     const config = this.fields.find(f => f.field === field);
-//     if (!config || config.type === 'boolean') return;
-
-//     this.sort = {
-//       field,
-//       type: config.type,
-//       direction: 'asc'
-//     };
-
-//     this.emit();
-//   }
-
-//   onDirectionChange(direction: 'asc' | 'desc') {
-//     if (!this.sort) return;
-
-//     this.sort = {
-//       ...this.sort,
-//       direction
-//     };
-
-//     this.emit();
-//   }
-
-// }
-
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+// sort-builder.component.ts (ĐÃ SỬA HOÀN CHỈNH)
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SortConfig } from '../models/filter.model';
 import { FILTER_FIELDS } from '../models/filter.model';
-import { KocData } from '../models/koc.model';
+
+export interface SortRule {
+  field: string;        // dùng string để tránh lỗi keyof
+  type: 'text' | 'number' | 'date';
+  direction: 'asc' | 'desc';
+}
 
 @Component({
   selector: 'app-sort-builder',
@@ -93,79 +17,72 @@ import { KocData } from '../models/koc.model';
   templateUrl: './sort-builder.component.html',
   styleUrls: ['./sort-builder.component.css']
 })
-export class SortBuilderComponent {
+export class SortBuilderComponent implements OnInit {
 
-  @Input() sort: SortConfig | null = null;
-  @Output() sortChange = new EventEmitter<SortConfig | null>();
+  @Input() sorts: SortRule[] = [];           // Nhận mảng rules từ ngoài
+  @Output() sortsChange = new EventEmitter<SortRule[] | null>();
+
+  sortRules: SortRule[] = [];
+  autoSort: boolean = true;
 
   fields = FILTER_FIELDS;
+  availableFields = this.fields.filter(f => f.type !== 'boolean');
 
-  sortableFields = this.fields.filter(f => f.type !== 'boolean');
+  ngOnInit() {
+    this.sortRules = [...this.sorts];
+  }
 
-  // Lấy label đẹp từ FILTER_FIELDS
   getFieldLabel(field: string): string {
-    const config = this.fields.find(f => f.field === field);
-    return config?.label || field;
+    return this.fields.find(f => f.field === field)?.label || field;
   }
 
-  // Label cho direction dựa trên type
-  getDirectionLabel(dir: 'asc' | 'desc'): string {
-    if (!this.sort) return '';
-
-    const type = this.sort.type;
-
+  getDirectionLabel(type: 'text' | 'number' | 'date', dir: 'asc' | 'desc'): string {
     if (dir === 'asc') {
-      if (type === 'text') return 'A → Z';
-      if (type === 'date') return 'Cũ → Mới';
-      return '0 → 9';
+      return type === 'text' ? 'A → Z' : type === 'date' ? 'Cũ → Mới' : '0 → 9';
     } else {
-      if (type === 'text') return 'Z → A';
-      if (type === 'date') return 'Mới → Cũ';
-      return '9 → 0';
+      return type === 'text' ? 'Z → A' : type === 'date' ? 'Mới → Cũ' : '9 → 0';
     }
   }
 
-  onFieldChange(field: string) {
-    if (!field) return;
+  // Sửa: dùng $event: Event và ép kiểu đúng
+  addRule(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const selectedField = select.value;
 
-    const config = this.fields.find(f => f.field === field);
-    if (!config || config.type === 'boolean') return;
+    if (!selectedField) return;
 
-    // ✅ Kiểm tra field có thực sự là key của KocData không
-    if (this.isValidField(field)) {
-      this.sort = {
-        field: field as keyof KocData,  // Bây giờ TS chấp nhận vì đã kiểm tra
-        type: config.type,
-        direction: 'asc'
-      };
-      this.emit();
-    }
-  }
+    const config = this.availableFields.find(f => f.field === selectedField);
+    if (!config) return;
 
-  // Thêm type guard
-  private isValidField(field: string): field is keyof KocData {
-    return field in ({} as KocData); // hoặc đơn giản hơn:
-    // return this.fields.some(f => f.field === field);
-  }
-  
-
-  onDirectionChange(direction: 'asc' | 'desc') {
-    if (!this.sort) return;
-
-    this.sort = {
-      ...this.sort,
-      direction
+    const newRule: SortRule = {
+      field: selectedField,
+      type: config.type as 'text' | 'number' | 'date',
+      direction: 'asc'
     };
 
+    this.sortRules.push(newRule);
+    this.emit();
+
+    // Reset select
+    select.value = '';
+  }
+
+  changeDirection(index: number, direction: 'asc' | 'desc') {
+    this.sortRules[index].direction = direction;
     this.emit();
   }
 
-  clear() {
-    this.sort = null;
+  removeRule(index: number) {
+    this.sortRules.splice(index, 1);
+    this.emit();
+  }
+
+  onAutoSortChange() {
+    // Có thể emit thêm nếu cần lưu trạng thái autoSort
     this.emit();
   }
 
   private emit() {
-    this.sortChange.emit(this.sort);
+    this.sortsChange.emit(this.sortRules.length > 0 ? this.sortRules : null);
   }
 }
