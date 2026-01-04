@@ -5,7 +5,9 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
-  updateDoc
+  updateDoc,
+  writeBatch,
+  getDocs
 } from 'firebase/firestore';
 import { BehaviorSubject, Observable, from, concatMap, map, catchError, of } from 'rxjs';
 import { db } from '../firebase';
@@ -55,6 +57,22 @@ export class KocService {
 
       this.kocSubject.next(data);
     });
+    // onSnapshot(ref, snapshot => {
+    //   const current = this.kocSubject.value;
+
+    //   const data = snapshot.docs.map(d => {
+    //     const old = current.find(k => k.id === d.id);
+    //     return {
+    //       id: d.id,
+    //       ...(d.data() as KocData),
+    //       selected: old?.selected ?? false,
+    //       crawlStatus: old?.crawlStatus ?? 'idle'
+    //     };
+    //   });
+
+    //   this.kocSubject.next(data);
+    // });
+
   }
 
   /** =====================
@@ -104,11 +122,28 @@ export class KocService {
     );
   }
 
+  
   private formatNow(): string {
     return new Date().toLocaleString('vi-VN', {
       hour12: false,
       timeZone: 'Asia/Ho_Chi_Minh'
     });
   }
+
+
+  async bulkAddExcel(kocs: any[]) {
+    const ref = collection(db, 'kocs');
+
+    for (const k of kocs) {
+      await addDoc(ref, k);
+    }
+  }
+
+  async getKocsSnapshot() {
+    const snap = await getDocs(collection(db, 'kocs'));
+    return snap.docs.map(d => d.data() as KocData);
+  }
+
+  
 }
 

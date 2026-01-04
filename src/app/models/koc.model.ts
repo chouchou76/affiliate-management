@@ -35,6 +35,7 @@ export interface KocData {
   saves: number;
 
   isAd?: boolean;
+  adsCode?: string;
 
   channel?: string;
   traffic?: string;

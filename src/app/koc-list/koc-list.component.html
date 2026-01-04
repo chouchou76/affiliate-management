@@ -41,7 +41,14 @@
         (sortsChange)="onSortChange($event)"
       ></app-sort-builder>
     </div>
-  </div>
+
+    <input
+      type="file"
+      accept=".xlsx"
+      (change)="onExcelUpload($event)"
+    />
+
+</div>
   
 <div *ngIf="kocList$ | async as list" class="table-wrapper">
     <table class="koc-table">
@@ -156,7 +163,7 @@
           </a>
         </td>
         <td>{{ item.videoId }}</td>
-        <td>{{ item.dataRetrievalTime | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+        <td>{{ item.dataRetrievalTime }}</td>
         <td>{{ item.gmv }}</td>
         <td>{{ item.views | number }}</td>
         <td>{{ item.likes | number }}</td>

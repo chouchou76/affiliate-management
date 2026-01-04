@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { KocListComponent } from './koc-list/koc-list.component';
-import { VideoListComponent } from './video-list/video-list.component';
 import { AddKocComponent } from './add-koc/add-koc.component';
 
 export const routes: Routes = [
