@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 import { AddKocComponent } from './add-koc/add-koc.component';
 import { KocListComponent } from './koc-list/koc-list.component';
 import { KocService } from './services/koc.service';
@@ -13,7 +14,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     AddKocComponent,
-    KocListComponent
+    
+    RouterOutlet
   ],
   templateUrl: './app.component.html'
 })

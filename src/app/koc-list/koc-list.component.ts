@@ -1,6 +1,7 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, BehaviorSubject, combineLatest, map, tap } from 'rxjs';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { KocService } from '../services/koc.service';
 import { KocData } from '../models/koc.model';
@@ -16,12 +17,11 @@ import { SortBuilderComponent, SortRule } from '../sort-builder/sort-builder.com
 @Component({
   selector: 'app-koc-list',
   standalone: true,
-  imports: [CommonModule, AddKocComponent, FormsModule, FilterBuilderComponent, SortBuilderComponent],
+  imports: [CommonModule, AddKocComponent, FormsModule, FilterBuilderComponent, SortBuilderComponent, RouterLink, RouterLinkActive],
   templateUrl: './koc-list.component.html',
   styleUrls: ['./koc-list.component.css'],
 })
 export class KocListComponent {
-
 
   @ViewChild('addKoc') addKoc!: AddKocComponent;
 

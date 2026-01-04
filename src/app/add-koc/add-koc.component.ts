@@ -170,7 +170,7 @@ export class AddKocComponent {
     } else {
       this.editingId = null;
       this.form.reset({
-        staff: 'Lê Châu',
+        staff: 'Hà Châu',
         manager: 'Trưởng Team',
         labels: [],
         products: []
